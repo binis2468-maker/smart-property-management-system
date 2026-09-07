@@ -1,0 +1,68 @@
+{% load static %}
+
+	{% include 'header.html' %}	
+<link rel="stylesheet" href="{% static 'assets/css/register.css' %}">
+
+<div class="register-page">
+    <div class="register-header">
+        <h1>ADD PROPERTY</h1>
+    </div>
+
+    <div class="register-container">
+        <form class="register-form" action="edit_prop/{{ prop.id }}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group file-upload-group">
+                <label for="photo" class="file-upload-label">
+                    <span id="file-name">Upload Property Photo </span>
+                    <input id="photo" name="property_photo" type="file" accept="image/*" class="file-input">
+                </label>
+                <label>Current Photo:</label>
+                <img src="{{ prop.property_photo.url }}" alt="Property Photo" width="200">
+            </div>
+
+            <div class="form-group">
+                <input  name="property_category" type="text" placeholder="{{ prop.property_category }}" required>
+            </div>
+            
+            <div class="form-group">
+                <input  name="property_name" type="text" placeholder="{{ prop.property_name }}" required>
+            </div>
+
+            <div class="form-group">
+                <input  name="property_location" type="text" placeholder="{{ prop.property_location }}" required>
+            </div>
+
+            <div class="form-group">
+                <input  name="property_budget" type="text" placeholder="{{ prop.property_budget }}" required>
+            </div>
+
+            <div class="form-group">
+                <input  name="property_bedroom" type="text" placeholder="{{ prop.property_bedroom }}" required>
+            </div>
+
+            <div class="form-group">
+                <input  name="property_bathroom" type="text" placeholder="{{ prop.property_bathroom }}" required>
+            </div>
+
+            <div class="form-group">
+                <input  name="property_area" type="text" placeholder="{{ prop.property_area }}" required>
+            </div>
+
+            <div class="form-group">
+                <input  name="property_floor" type="text" placeholder="{{ prop.property_floor }}" required>
+            </div>
+
+            <div class="form-group">
+                <input  name="property_parking" type="text" placeholder="{{ prop.property_parking }}" required>
+            </div>
+
+            <div class="register-actions">
+                <button id="submitbttn" type="submit" class="register-btn">
+                    ADD PROPERTY
+                </button>
+            </div>
+        </form>				
+    </div>
+</div>
+{% include 'footer.html' %}

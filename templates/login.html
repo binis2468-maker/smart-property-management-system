@@ -1,0 +1,51 @@
+{% load static %}
+
+{% include 'header.html' %}
+
+<link rel="stylesheet" href="{% static 'assets/css/login.css' %}">
+
+<div class="login-page">
+    <div class="login-header">
+        <h1>ACCOUNT LOGIN</h1>
+    </div>
+
+    <div class="login-container">
+        {% if error %}
+        <div class="alert alert-danger" role="alert" style="margin-bottom: 20px; font-size: 0.9em; text-align: center; border-radius: 8px;">
+            <i class="fa fa-exclamation-circle"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        <form class="login-form" action="/login" method="post" autocomplete="off">
+            {% csrf_token %}
+
+            <!-- Anti-autofill dummy traps for aggressive browser password managers -->
+            <input type="text" name="fake_username_trap" style="position: absolute; top: -9999px; left: -9999px;" tabindex="-1" autocomplete="off">
+            <input type="password" name="fake_password_trap" style="position: absolute; top: -9999px; left: -9999px;" tabindex="-1" autocomplete="new-password">
+
+            <div class="form-group">
+                <input id="email" name="email" type="email" placeholder="Enter your email address" value="" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
+            </div>
+
+            <div class="form-group">
+                <input id="password" name="password" type="password" placeholder="Enter your password" value="" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" required>
+            </div>
+
+            <div class="login-actions">
+                <button id="submitbttn" type="submit" class="login-btn">
+                    SIGN IN
+                </button>
+            </div>
+            
+            <div class="login-links" style="margin-top: 15px;">
+                <a href="/register">Don't have an account? Register as User</a>
+            </div>
+            <div class="login-links">
+                <a href="/buildregister">Are you a Builder? Register here</a>
+            </div>
+        </form>				
+    </div>
+</div>
+		
+{% include 'footer.html' %}
+

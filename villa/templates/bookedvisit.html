@@ -1,0 +1,69 @@
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Properties</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .property-card-img {
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+        .card-body strong {
+            display: inline-block;
+            width: 100px; /* Align labels */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container my-5">
+        <h2 class="mb-4 text-center">Bookings</h2>
+        
+        <div class="row">
+            
+            {% for i in prop %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    
+                   
+                    
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-primary">Booked by:{{i.name}}</h5>
+                        <p class="card-text small mb-1">
+                            <strong>Email:</strong> {{ i.email }}
+                        </p>
+                        <p class="card-text small mb-1">
+                            <strong>Phone:</strong> {{ i.phone }}
+                        </p>
+                        <hr class="my-2">
+                        <strong>Property</strong> 
+                        <p class="card-text small mb-1">
+                            <strong>name:</strong> {{ i.property_name }}
+                        </p>
+                        <p class="card-text small mb-1">
+                            <strong>Location:</strong> {{ i.property_location }}
+                        </p>
+                        <p class="card-text small mb-1">
+                            <strong>Budget:</strong> ${{ i.property_budget }}
+                        </p>
+                        
+                       
+                    </div>
+                    
+                </div>
+                </div>
+            {% endfor %}
+            
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% include 'footer.html' %}

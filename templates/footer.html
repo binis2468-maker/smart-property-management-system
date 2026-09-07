@@ -1,0 +1,253 @@
+ {% load static %}
+ <footer>
+    <div class="container">
+      <div class="col-lg-8">
+        <p>Copyright © 2048 Villa Agency Co., Ltd. All rights reserved. 
+        
+        Design: <a rel="nofollow" href="https://templatemo.com" target="_blank">TemplateMo</a> Distribution: <a href="https://themewagon.com">ThemeWagon</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- VillaBot AI Virtual Assistant Widget -->
+  <style>
+    #villabot-launcher {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f35525 0%, #ee626b 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 6px 20px rgba(243, 85, 37, 0.4);
+      cursor: pointer;
+      z-index: 9999;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #villabot-launcher:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 25px rgba(243, 85, 37, 0.5);
+    }
+    #villabot-window {
+      position: fixed;
+      bottom: 95px;
+      right: 25px;
+      width: 360px;
+      max-width: 90vw;
+      height: 480px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 9999;
+      border: 1px solid #f1f3f5;
+      font-family: 'Poppins', sans-serif;
+    }
+    .villabot-header {
+      background: linear-gradient(135deg, #181a20 0%, #2b2d42 100%);
+      color: #fff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid #f35525;
+    }
+    .villabot-header h6 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .villabot-body {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat-msg {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+    .chat-msg.bot {
+      background: #ffffff;
+      color: #1e1e1e;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      border: 1px solid #e9ecef;
+    }
+    .chat-msg.user {
+      background: #f35525;
+      color: #ffffff;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+    .villabot-footer {
+      padding: 10px 12px;
+      background: #fff;
+      border-top: 1px solid #eee;
+    }
+    .villabot-chips {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .chip-btn {
+      background: #f1f3f5;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      white-space: nowrap;
+      color: #495057;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .chip-btn:hover {
+      background: #f35525;
+      color: #fff;
+    }
+    .villabot-input-group {
+      display: flex;
+      gap: 6px;
+    }
+    .villabot-input-group input {
+      flex: 1;
+      border: 1px solid #ced4da;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      outline: none;
+    }
+    .villabot-input-group button {
+      background: #f35525;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+
+  <div id="villabot-launcher" onclick="toggleVillaBot()" title="VillaBot Assistant">
+    <i class="fa fa-comments"></i>
+  </div>
+
+  <div id="villabot-window">
+    <div class="villabot-header">
+      <h6><i class="fa fa-robot text-warning"></i> VillaBot Assistant</h6>
+      <button onclick="toggleVillaBot()" class="btn-close btn-close-white btn-sm" aria-label="Close"></button>
+    </div>
+
+    <div class="villabot-body" id="villabot-messages">
+      <div class="chat-msg bot">
+        👋 Hi there! I am <strong>VillaBot</strong>, your real estate AI guide. Ask me about properties, budget filtering, site visit bookings, or monthly EMI estimations!
+      </div>
+    </div>
+
+    <div class="villabot-footer">
+      <div class="villabot-chips">
+        <button class="chip-btn" onclick="sendVillaBotChip('Show me Luxury Villas')">🏡 Luxury Villas</button>
+        <button class="chip-btn" onclick="sendVillaBotChip('How to Schedule a Visit?')">📅 Schedule Visit</button>
+        <button class="chip-btn" onclick="sendVillaBotChip('Calculate EMI')">🧮 EMI Calculator</button>
+        <button class="chip-btn" onclick="sendVillaBotChip('Contact Builder')">📞 Builder Info</button>
+      </div>
+
+      <div class="villabot-input-group">
+        <input type="text" id="villabot-input" placeholder="Type your property question..." onkeypress="handleVillaBotKey(event)">
+        <button onclick="sendVillaBotMsg()"><i class="fa fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleVillaBot() {
+      const win = document.getElementById('villabot-window');
+      win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function handleVillaBotKey(e) {
+      if (e.key === 'Enter') sendVillaBotMsg();
+    }
+
+    function sendVillaBotChip(text) {
+      document.getElementById('villabot-input').value = text;
+      sendVillaBotMsg();
+    }
+
+    function sendVillaBotMsg() {
+      const input = document.getElementById('villabot-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      const container = document.getElementById('villabot-messages');
+
+      // Add user message
+      const userDiv = document.createElement('div');
+      userDiv.className = 'chat-msg user';
+      userDiv.innerText = msg;
+      container.appendChild(userDiv);
+
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      // Generate bot response
+      setTimeout(() => {
+        const botDiv = document.createElement('div');
+        botDiv.className = 'chat-msg bot';
+        botDiv.innerHTML = getVillaBotResponse(msg);
+        container.appendChild(botDiv);
+        container.scrollTop = container.scrollHeight;
+      }, 500);
+    }
+
+    function getVillaBotResponse(query) {
+      const q = query.toLowerCase();
+      if (q.includes('villa') || q.includes('house')) {
+        return "🏡 We have premium <strong>Luxury Villas</strong> in key prime locations! Head over to the <a href='/viewprop?category=villa'>Available Properties</a> tab to browse prices and floor plans.";
+      } else if (q.includes('visit') || q.includes('schedule') || q.includes('book')) {
+        return "📅 To schedule a site visit: Log in as a User, navigate to <a href='/viewprop'>Properties</a>, and click <strong>'Schedule a Visit'</strong> on any listing!";
+      } else if (q.includes('emi') || q.includes('loan') || q.includes('calculator')) {
+        return "🧮 You can calculate monthly loan payments on any property card using our <strong>EMI Calculator</strong> button!";
+      } else if (q.includes('builder') || q.includes('register')) {
+        return "🏗️ Builders can register via <a href='/buildregister'>Builder Registration</a>. Applications require quick approval by our Admin before posting properties.";
+      } else if (q.includes('contact') || q.includes('query')) {
+        return "✉️ Have custom requirements? You can send a direct inquiry through the <a href='/#contact'>Contact Us section</a> on our home page.";
+      } else {
+        return "💡 Thanks for reaching out! You can explore all verified listings in our catalog or filter properties by budget and category on the <a href='/viewprop'>Properties Page</a>.";
+      }
+    }
+  </script>
+
+  <!-- Scripts -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/js/isotope.min.js' %}"></script>
+  <script src="{% static 'assets/js/owl-carousel.js' %}"></script>
+  <script src="{% static 'assets/js/counter.js' %}"></script>
+  <script src="{% static 'assets/js/custom.js' %}"></script>
+
+  </body>
+</html>

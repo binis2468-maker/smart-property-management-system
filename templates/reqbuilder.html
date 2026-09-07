@@ -1,0 +1,47 @@
+{% load static %}
+
+{% include 'header.html' %}
+<div class="container mt-5 mb-5">
+  <div class="text-center mb-4">
+    <h2>Pending Builder Requests</h2>
+    <p class="text-muted">Review and approve or reject builder registrations.</p>
+  </div>
+  <div class="row">
+    {% for i in builders %}
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card shadow-sm h-100">
+        {% if i.buildphoto %}
+        <img src="{{ i.buildphoto.url }}" class="card-img-top" alt="{{ i.buildname }}" style="height:220px; object-fit:cover;">
+        {% else %}
+        <img src="{% static 'dashboardassets/images/profile/user-1.jpg' %}" class="card-img-top" alt="{{ i.buildname }}" style="height:220px; object-fit:cover;">
+        {% endif %}
+        
+        <div class="card-body">
+          <h5 class="card-title text-primary fw-bold">{{ i.buildname }}</h5>
+          <p class="card-text">
+            <strong>Email:</strong> {{ i.buildemail }} <br>
+            <strong>Phone:</strong> {{ i.buildphone }} <br>
+            <span class="badge bg-warning text-dark mt-2">Pending Approval</span>
+          </p>
+        </div>
+        
+        <div class="card-footer d-flex justify-content-between bg-white">
+          <a href="{% url 'Approve_builder' id=i.id %}" class="btn btn-success btn-sm" onclick="return confirm('Approve this builder?');">
+            <i class="fa fa-check"></i> Approve
+          </a>
+          <a href="{% url 'Delete_builder' id=i.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Reject and delete this builder request?');">
+            <i class="fa fa-trash"></i> Reject
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-muted">
+      <h4>No pending builder requests.</h4>
+      <p>All builder registrations have been reviewed.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% include 'footer.html' %}

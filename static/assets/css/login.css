@@ -1,0 +1,122 @@
+/* --- Global Variables (Optional but Recommended) --- */
+:root {
+    --primary-color: #f64803; /* A nice blue for buttons/accents */
+    --text-color: #333;
+    --border-color: #ddd;
+    --background-color: #f8f9fa;
+    --form-bg: #fff;
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Page & Header Styling --- */
+body {
+    background-color: var(--background-color); /* Light background for contrast */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ /* Helps center the content vertically */
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0; /* Remove default body margin */
+}
+
+.login-page {
+    width: 100%;
+    max-width: 400px; /* Constrain the form width for focus */
+    padding: 40px;
+    margin: auto;
+    margin-top: 80px; /* Space from top */
+    background-color: var(--form-bg);
+    border-radius: 12px; /* Soft rounded corners */
+    box-shadow: var(--shadow-light);
+    text-align: center;
+}
+
+.login-header {
+    margin-bottom: 30px;
+}
+
+.login-header h1 {
+    color: var(--text-color);
+    font-size: 2.2em;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+    padding-bottom: 8px;
+}
+
+
+/* --- Form Input Styling --- */
+.login-form .form-group {
+    margin-bottom: 20px;
+    text-align: left; /* Aligns input placeholders better */
+}
+
+.login-form input[type="email"], 
+.login-form input[type="password"],
+.login-form input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1em;
+    color: var(--text-color);
+    box-sizing: border-box; /* Ensures padding doesn't widen the input */
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form input:focus {
+    border-color: var(--primary-color); /* Highlight on focus */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none; /* Remove default browser focus outline */
+}
+
+/* --- Button Styling --- */
+.login-actions {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.login-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.login-btn:active {
+    transform: translateY(1px); /* Slight press effect */
+}
+
+/* --- Links Styling (Forgot/Register) --- */
+.login-links {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: var(--text-color);
+}
+
+.login-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
+
+.login-links span {
+    margin: 0 10px;
+    color: var(--border-color);
+}

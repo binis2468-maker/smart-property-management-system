@@ -1,0 +1,55 @@
+{% load static %}
+
+	{% include 'header.html' %}	
+<link rel="stylesheet" href="{% static 'assets/css/register.css' %}">
+
+<div class="register-page">
+    <div class="register-header">
+        <h1>REGISTER AS A BUILDER</h1>
+    </div>
+
+    <div class="register-container">
+        <form class="register-form" action="buildregister" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group file-upload-group">
+                <label for="photo" class="file-upload-label">
+                    <span id="file-name">Upload Profile Photo </span>
+                    <input id="photo" name="buildphoto" type="file" accept="image/*" class="file-input">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <input id="name" name="buildname" type="text" placeholder="Builder Name" required>
+            </div>
+            
+            <div class="form-group">
+                <input id="email" name="buildemail" type="email" placeholder="Email Address" required>
+            </div>
+            
+            <div class="form-group">
+                <input id="phone" name="buildphone" type="text" placeholder="Phone Number" required>
+            </div>
+
+            <div class="form-group">
+                <input id="password" name="buildpassword" type="password" placeholder="Password" required>
+            </div>
+
+            <div class="form-group">
+                <input id="confirm-password" name="buildconfirm_password" type="password" placeholder="Confirm Password" required>
+            </div>
+
+            <div class="register-actions">
+                <button id="submitbttn" type="submit" class="register-btn">
+                    REGISTER
+                </button>
+            </div>
+            
+            <div class="register-links">
+                <p>Already have an account? <a href="/login">Login here</a></p>
+            </div>
+        </form>				
+    </div>
+</div>
+
+{% include 'footer.html' %}

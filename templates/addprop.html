@@ -1,0 +1,67 @@
+{% load static %}
+
+{% include 'header.html' %}	
+<link rel="stylesheet" href="{% static 'assets/css/register.css' %}">
+
+<div class="register-page">
+    <div class="register-header">
+        <h1>ADD PROPERTY</h1>
+    </div>
+
+    <div class="register-container">
+        <form class="register-form" action="/add_prop" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group file-upload-group">
+                <label for="photo" class="file-upload-label">
+                    <span id="file-name">Upload Property Photo </span>
+                    <input id="photo" name="property_photo" type="file" accept="image/*" class="file-input">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <input name="property_category" type="text" placeholder="Category (e.g. Luxury Villa, Modern Condo)" required>
+            </div>
+            
+            <div class="form-group">
+                <input name="property_name" type="text" placeholder="Property Name / Title" required>
+            </div>
+
+            <div class="form-group">
+                <input name="property_location" type="text" placeholder="Location / Address" required>
+            </div>
+
+            <div class="form-group">
+                <input name="property_budget" type="text" placeholder="Budget / Price ($)" required>
+            </div>
+
+            <div class="form-group">
+                <input name="property_bedroom" type="text" placeholder="Number of Bedrooms (e.g. 4)" required>
+            </div>
+
+            <div class="form-group">
+                <input name="property_bathroom" type="text" placeholder="Number of Bathrooms (e.g. 3)" required>
+            </div>
+
+            <div class="form-group">
+                <input name="property_area" type="text" placeholder="Total Area (e.g. 320m2)" required>
+            </div>
+
+            <div class="form-group">
+                <input name="property_floor" type="text" placeholder="Floor Number (e.g. 3rd)" required>
+            </div>
+
+            <div class="form-group">
+                <input name="property_parking" type="text" placeholder="Parking (e.g. 2 cars, Yes)" required>
+            </div>
+
+            <div class="register-actions">
+                <button id="submitbttn" type="submit" class="register-btn">
+                    ADD PROPERTY
+                </button>
+            </div>
+        </form>				
+    </div>
+</div>
+
+{% include 'footer.html' %}

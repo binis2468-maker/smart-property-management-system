@@ -1,0 +1,48 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h2>
+            {% if request.session.admin %}
+                All Scheduled Visits
+            {% elif request.session.bid %}
+                Visits Scheduled for My Properties
+            {% else %}
+                My Scheduled Visits
+            {% endif %}
+        </h2>
+        <p class="text-muted">Overview of client visit appointments.</p>
+    </div>
+    
+    <div class="row">
+        {% for i in prop %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <span class="small fw-bold"><i class="fa fa-calendar-check"></i> Booking #{{ i.id }}</span>
+                    <span class="badge bg-light text-primary">Scheduled</span>
+                </div>
+                <div class="card-body">
+                    <h6 class="fw-bold text-dark mb-2"><i class="fa fa-user text-muted"></i> Client Information</h6>
+                    <p class="card-text small mb-1"><strong>Name:</strong> {{ i.name }}</p>
+                    <p class="card-text small mb-1"><strong>Email:</strong> {{ i.email }}</p>
+                    <p class="card-text small mb-1"><strong>Phone:</strong> {{ i.phone }}</p>
+                    <hr class="my-2">
+                    <h6 class="fw-bold text-dark mb-2"><i class="fa fa-building text-muted"></i> Property Details</h6>
+                    <p class="card-text small mb-1"><strong>Property:</strong> {{ i.property_name }}</p>
+                    <p class="card-text small mb-1"><strong>Location:</strong> {{ i.property_location }}</p>
+                    <p class="card-text small mb-1"><strong>Budget:</strong> ${{ i.property_budget }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5 text-muted">
+            <h4>No scheduled visits found.</h4>
+            <p>Visits will appear here once booked.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% include 'footer.html' %}
