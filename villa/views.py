@@ -32,16 +32,67 @@ def home(request):
 
 def index(request):
     contact_success = False
+    error = None
+
+    user_id = str(request.session.get('uid', ''))
+    udata = None
+    if user_id:
+        udata = user_details.objects.filter(pk=user_id).first()
+
+    uname = udata.name if udata else request.session.get('uname', '')
+    uemail = udata.email if udata else ''
+
     if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
-        email = request.POST.get('email', '').strip()
-        subject = request.POST.get('subject', '').strip()
-        message = request.POST.get('message', '').strip()
-        if name and email and message:
-            queries = query(name=name, email=email, subject=subject, message=message)
-            queries.save()
+        problem_type = request.POST.get('problem_type', '').strip()
+        other_problem_type = request.POST.get('other_problem_type', '').strip()
+        description = request.POST.get('description', '').strip() or request.POST.get('message', '').strip()
+        rating = request.POST.get('rating', '').strip()
+
+        # Legacy fallback if subject was passed instead of problem_type
+        subject_param = request.POST.get('subject', '').strip()
+        if not problem_type and subject_param:
+            problem_type = subject_param
+
+        name = uname or request.POST.get('name', '').strip() or 'Guest User'
+        email = uemail or request.POST.get('email', '').strip() or 'guest@example.com'
+
+        if not problem_type:
+            error = 'Please select a Problem Type before submitting.'
+        else:
+            if problem_type == 'Other' and other_problem_type:
+                final_problem_type = f"Other: {other_problem_type}"
+            else:
+                final_problem_type = problem_type
+
+            q = query.objects.create(
+                user_id=user_id if user_id else '',
+                name=name,
+                email=email,
+                subject=final_problem_type,
+                message=description,
+                problem_type=final_problem_type,
+                rating=rating,
+                status='New'
+            )
+
+            # Send notification to admin
+            from user_app.models import notification
+            notification.objects.create(
+                recipient_type='admin',
+                recipient_id='admin',
+                title=f'New Issue Reported: {final_problem_type}',
+                message=f'Report from {name}: {final_problem_type}.',
+                link='/viewquery'
+            )
+
             contact_success = True
-    return render(request, 'index.html', {'contact_success': contact_success})
+
+    return render(request, 'index.html', {
+        'contact_success': contact_success,
+        'error': error,
+        'uname': uname,
+        'uemail': uemail
+    })
 
 def dashboardindex(request):
     if not request.session.get('admin'):

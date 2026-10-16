@@ -20,6 +20,7 @@ from . import views
 
 urlpatterns = [
     path('viewquery', views.viewquery, name='viewquery'),
+    path('update_query_status/<int:id>/<str:status_val>', views.update_query_status, name='update_query_status'),
     path('reqbuilder', views.reqbuilder, name='reqbuilder'),
     path('Approve_builder/<int:id>', views.Approve_builder, name="Approve_builder"),
     path('Delete_builder/<int:id>', views.Delete_builder, name="Delete_builder"),

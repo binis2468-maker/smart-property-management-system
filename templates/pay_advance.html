@@ -1,0 +1,74 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container my-5" style="max-width: 650px;">
+    <div class="card shadow border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-dark text-white p-4 text-center">
+            <h4 class="fw-bold mb-1"><i class="fa fa-credit-card text-warning me-2"></i> Online Booking Advance Payment</h4>
+            <p class="text-light opacity-75 small mb-0">Test / Sandbox Gateway Integration</p>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="p-3 bg-light rounded-3 border mb-4">
+                <h5 class="fw-bold text-dark mb-1">{{ booking.property_name }}</h5>
+                <p class="text-muted small mb-2"><i class="fa fa-map-marker-alt text-danger me-1"></i> {{ booking.property_location }}</p>
+                
+                <hr class="my-2">
+
+                <div class="d-flex justify-content-between small mb-1">
+                    <span>Total Property Price:</span>
+                    <strong class="text-dark">₹{{ booking.property_price }}</strong>
+                </div>
+                <div class="d-flex justify-content-between small mb-1">
+                    <span>Booking Advance / Token Amount:</span>
+                    <strong class="text-danger fs-5">₹{{ booking.advance_amount }}</strong>
+                </div>
+                <div class="d-flex justify-content-between small">
+                    <span>Calculated Remaining Balance:</span>
+                    <strong class="text-primary">₹{{ booking.remaining_amount }} (Pending)</strong>
+                </div>
+            </div>
+
+            <div class="alert alert-info rounded-3 small">
+                <i class="fa fa-info-circle me-1"></i> <strong>Academic Test Mode:</strong> This sandbox gateway simulates real-time advance payment without real money transactions.
+            </div>
+
+            <form method="POST" action="/process_sandbox_payment/{{ booking.id }}">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Select Test Payment Method</label>
+                    <select class="form-select" required>
+                        <option value="card">💳 Test Credit / Debit Card</option>
+                        <option value="upi">📱 Test UPI / NetBanking Sandbox</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Card / Account Holder Name</label>
+                    <input type="text" class="form-control" value="{{ booking.user_name }}" required>
+                </div>
+
+                <div class="row g-2 mb-4">
+                    <div class="col-8">
+                        <label class="form-label small fw-bold">Test Card Number</label>
+                        <input type="text" class="form-control" value="4000 0000 0000 1234" required>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label small fw-bold">CVV</label>
+                        <input type="password" class="form-control" value="123" maxlength="3" required>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                    <a href="/my_bookings" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Cancel</a>
+                    <button type="submit" class="btn btn-danger btn-lg rounded-pill px-4 fw-bold shadow">
+                        <i class="fa fa-lock me-1"></i> Pay Advance (₹{{ booking.advance_amount }})
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

@@ -8,6 +8,8 @@ def add_prop(request):
 
     if request.method == 'POST':
         property_photo = request.FILES.get('property_photo')
+        floor_plan_image = request.FILES.get('floor_plan_image')
+        model_3d = request.FILES.get('model_3d')
         property_category = request.POST.get('property_category', '').strip()
         property_name = request.POST.get('property_name', '').strip()
         property_location = request.POST.get('property_location', '').strip()
@@ -18,9 +20,21 @@ def add_prop(request):
         property_floor = request.POST.get('property_floor', '').strip()
         property_parking = request.POST.get('property_parking', '').strip()
 
+        hospital_dist = request.POST.get('hospital_dist', '1.5 km').strip() or '1.5 km'
+        pharmacy_dist = request.POST.get('pharmacy_dist', '0.5 km').strip() or '0.5 km'
+        school_dist = request.POST.get('school_dist', '2.0 km').strip() or '2.0 km'
+        supermarket_dist = request.POST.get('supermarket_dist', '1.2 km').strip() or '1.2 km'
+        bank_dist = request.POST.get('bank_dist', '1.0 km').strip() or '1.0 km'
+        bus_stop_dist = request.POST.get('bus_stop_dist', '0.4 km').strip() or '0.4 km'
+        railway_dist = request.POST.get('railway_dist', '3.5 km').strip() or '3.5 km'
+        airport_dist = request.POST.get('airport_dist', '22 km').strip() or '22 km'
+        main_road_dist = request.POST.get('main_road_dist', '0.3 km').strip() or '0.3 km'
+
         prop_det = property_details(
             user_id=str(user_id),
             property_photo=property_photo,
+            floor_plan_image=floor_plan_image,
+            model_3d=model_3d,
             property_category=property_category,
             property_name=property_name,
             property_location=property_location,
@@ -29,7 +43,16 @@ def add_prop(request):
             property_bathroom=property_bathroom,
             property_area=property_area,
             property_floor=property_floor,
-            property_parking=property_parking
+            property_parking=property_parking,
+            hospital_dist=hospital_dist,
+            pharmacy_dist=pharmacy_dist,
+            school_dist=school_dist,
+            supermarket_dist=supermarket_dist,
+            bank_dist=bank_dist,
+            bus_stop_dist=bus_stop_dist,
+            railway_dist=railway_dist,
+            airport_dist=airport_dist,
+            main_road_dist=main_road_dist
         )
         prop_det.save()
         return redirect('/myprop')
@@ -57,6 +80,10 @@ def edit_prop(request, id):
     if request.method == 'POST':
         if 'property_photo' in request.FILES and request.FILES['property_photo']:
             prop.property_photo = request.FILES['property_photo']
+        if 'floor_plan_image' in request.FILES and request.FILES['floor_plan_image']:
+            prop.floor_plan_image = request.FILES['floor_plan_image']
+        if 'model_3d' in request.FILES and request.FILES['model_3d']:
+            prop.model_3d = request.FILES['model_3d']
 
         prop.property_category = request.POST.get('property_category', prop.property_category).strip()
         prop.property_name = request.POST.get('property_name', prop.property_name).strip()
@@ -67,6 +94,16 @@ def edit_prop(request, id):
         prop.property_area = request.POST.get('property_area', prop.property_area).strip()
         prop.property_floor = request.POST.get('property_floor', prop.property_floor).strip()
         prop.property_parking = request.POST.get('property_parking', prop.property_parking).strip()
+
+        prop.hospital_dist = request.POST.get('hospital_dist', prop.hospital_dist).strip()
+        prop.pharmacy_dist = request.POST.get('pharmacy_dist', prop.pharmacy_dist).strip()
+        prop.school_dist = request.POST.get('school_dist', prop.school_dist).strip()
+        prop.supermarket_dist = request.POST.get('supermarket_dist', prop.supermarket_dist).strip()
+        prop.bank_dist = request.POST.get('bank_dist', prop.bank_dist).strip()
+        prop.bus_stop_dist = request.POST.get('bus_stop_dist', prop.bus_stop_dist).strip()
+        prop.railway_dist = request.POST.get('railway_dist', prop.railway_dist).strip()
+        prop.airport_dist = request.POST.get('airport_dist', prop.airport_dist).strip()
+        prop.main_road_dist = request.POST.get('main_road_dist', prop.main_road_dist).strip()
         prop.save()
 
     return redirect('/myprop')

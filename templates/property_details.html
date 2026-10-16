@@ -1,0 +1,621 @@
+{% load static %}
+{% include 'header.html' %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+    :root {
+        --villa-orange: #f35525;
+        --villa-dark: #1e1e1e;
+    }
+    .room-badge-btn {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .room-badge-btn:hover, .room-badge-btn.active {
+        background-color: var(--villa-orange) !important;
+        color: #fff !important;
+        transform: translateY(-2px);
+    }
+    .floor-plan-img {
+        max-height: 450px;
+        object-fit: contain;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+</style>
+
+<div class="container my-5" style="max-width: 1100px;">
+
+    <!-- Breadcrumb & Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <span class="badge bg-dark px-3 py-2 rounded-pill text-uppercase mb-2" style="font-size: 0.78rem;">
+                Classification: {{ prop.property_category }}
+            </span>
+            <h2 class="fw-bold mb-1">{{ prop.property_name }}</h2>
+            <p class="text-muted small mb-0"><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ prop.property_location }}</p>
+        </div>
+        <div class="text-end">
+            <h3 class="fw-bold text-danger mb-0">₹{{ prop.property_budget }}</h3>
+            <span class="text-muted small"><i class="bi bi-star-fill text-warning me-1"></i> {{ avg_rating|default:5.0 }} Rating ({{ review_count|default:0 }} Reviews)</span>
+        </div>
+    </div>
+
+    <!-- Main Content Row -->
+    <div class="row g-4 mb-5">
+        <!-- Property Image -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                {% if prop.property_photo %}
+                <img src="{{ prop.property_photo.url }}" class="w-100" style="height: 380px; object-fit: cover;" alt="{{ prop.property_name }}">
+                {% else %}
+                <img src="{% static 'assets/images/property-01.jpg' %}" class="w-100" style="height: 380px; object-fit: cover;" alt="{{ prop.property_name }}">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Specs & Overview -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-light">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-info-circle me-2 text-danger"></i> Property Specifications</h5>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="p-3 bg-white rounded-3 border">
+                            <small class="text-muted d-block mb-1"><i class="bi bi-house-door me-1"></i> Category</small>
+                            <strong class="text-dark fs-6">{{ prop.property_category }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-white rounded-3 border">
+                            <small class="text-muted d-block mb-1"><i class="bi bi-aspect-ratio me-1"></i> Total Area</small>
+                            <strong class="text-dark fs-6">{{ prop.property_area }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-white rounded-3 border">
+                            <small class="text-muted d-block mb-1"><i class="bi bi-door-open me-1"></i> Bedrooms</small>
+                            <strong class="text-dark fs-6">{{ prop.property_bedroom }} Beds</strong>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-white rounded-3 border">
+                            <small class="text-muted d-block mb-1"><i class="bi bi-droplet me-1"></i> Bathrooms</small>
+                            <strong class="text-dark fs-6">{{ prop.property_bathroom }} Baths</strong>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-white rounded-3 border">
+                            <small class="text-muted d-block mb-1"><i class="bi bi-layers me-1"></i> Floor</small>
+                            <strong class="text-dark fs-6">{{ prop.property_floor }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-white rounded-3 border">
+                            <small class="text-muted d-block mb-1"><i class="bi bi-p-square me-1"></i> Parking</small>
+                            <strong class="text-dark fs-6">{{ prop.property_parking }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-auto d-flex flex-column gap-2">
+                    {% if request.session.uid %}
+                    <a href="/check_availability/{{ prop.id }}" class="btn btn-danger py-2 fw-bold rounded-pill" style="background-color: #f35525; border-color: #f35525;">
+                        <i class="bi bi-calendar-check me-1"></i> Schedule a Site Visit
+                    </a>
+                    <a href="/start_chat/{{ prop.user_id }}/{{ prop.id }}" class="btn btn-outline-primary py-2 fw-bold rounded-pill">
+                        <i class="bi bi-chat-dots me-1"></i> Chat with Builder
+                    </a>
+                    {% else %}
+                    <a href="/login" class="btn btn-primary py-2 fw-bold rounded-pill">
+                        Login to Schedule Visit / Chat
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2D FLOOR PLAN SECTION -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-diagram-2 text-danger me-2"></i> Interactive 2D Floor Plan & Interior Layout</h4>
+                <p class="text-muted small mb-0">Roofless top-view interior layout preview with interactive room dimension highlights.</p>
+            </div>
+        </div>
+
+        {% if prop.floor_plan_image %}
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7 text-center">
+                <img src="{{ prop.floor_plan_image.url }}" class="img-fluid floor-plan-img border p-2 w-100" id="mainFloorPlan" alt="2D Floor Plan Layout">
+            </div>
+            <div class="col-lg-5">
+                <h6 class="fw-bold text-dark mb-3">Tap / Select Room Layout Breakdown:</h6>
+                <div class="d-flex flex-wrap gap-2 mb-4" id="roomBadges">
+                    <span class="badge bg-light text-dark border p-2 px-3 room-badge-btn active" onclick="showRoomDetails('Living Room', '240 sq.ft', 'Spacious open-concept living area with prime natural lighting.')">🛋️ Living Room</span>
+                    <span class="badge bg-light text-dark border p-2 px-3 room-badge-btn" onclick="showRoomDetails('Dining Room', '150 sq.ft', 'Dedicated dining space connected to kitchen.')">🍽️ Dining Area</span>
+                    <span class="badge bg-light text-dark border p-2 px-3 room-badge-btn" onclick="showRoomDetails('Kitchen', '120 sq.ft', 'Modern modular kitchen with granite countertop.')">🍳 Modular Kitchen</span>
+                    <span class="badge bg-light text-dark border p-2 px-3 room-badge-btn" onclick="showRoomDetails('Master Bedroom', '180 sq.ft', 'Master bedroom with attached bathroom & balcony access.')">🛏️ Master Bedroom</span>
+                    <span class="badge bg-light text-dark border p-2 px-3 room-badge-btn" onclick="showRoomDetails('Bedroom 2', '140 sq.ft', 'Secondary bedroom with closet space.')">🛏️ Bedroom 2</span>
+                    <span class="badge bg-light text-dark border p-2 px-3 room-badge-btn" onclick="showRoomDetails('Bathrooms', '60 sq.ft', 'Premium anti-skid tiled bathrooms.')">🛁 Bathrooms</span>
+                    <span class="badge bg-light text-dark border p-2 px-3 room-badge-btn" onclick="showRoomDetails('Balcony', '50 sq.ft', 'Scenic exterior balcony view.')">🌅 Balcony</span>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 border" id="roomInfoBox">
+                    <h6 class="fw-bold text-danger mb-1" id="roomNameTitle">🛋️ Living Room</h6>
+                    <small class="text-muted d-block mb-1">Estimated Area: <strong class="text-dark" id="roomAreaVal">240 sq.ft</strong></small>
+                    <p class="small text-secondary mb-0" id="roomDescVal">Spacious open-concept living area with prime natural lighting.</p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="p-4 bg-light rounded-3 text-center border">
+            <i class="bi bi-image-alt display-5 text-secondary d-block mb-2"></i>
+            <h6 class="fw-bold text-dark mb-1">Floor plan not available for this property.</h6>
+            <p class="text-muted small mb-0">The builder has not uploaded a 2D floor plan layout image yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- TOGGLE 3D PLAN BUTTON -->
+    <div class="text-center mb-4">
+        <button type="button" id="toggle3dBtn" class="btn btn-danger btn-lg px-4 py-2 fw-bold rounded-pill shadow-sm" onclick="toggle3DViewSection()" style="background-color: #f35525; border-color: #f35525;">
+            <i class="bi bi-box-seam me-2" id="toggle3dIcon"></i><span id="toggle3dText">View 3D Plan</span>
+        </button>
+    </div>
+
+    <!-- 3D PROPERTY VIEW SECTION (Initially Hidden) -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-5" id="3d-viewer-card" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-box-seam text-danger me-2"></i> 3D Property View</h4>
+                <p class="text-muted small mb-0">Interactive 3D building visualization model with rotation, tilt, and zoom.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-light text-dark border px-3 py-2 fw-semibold">
+                    <i class="bi bi-hand-index-thumb text-danger me-1"></i> Drag to rotate • Scroll to zoom
+                </span>
+            </div>
+        </div>
+
+        <!-- 3D Controls Toolbar -->
+        <div class="d-flex justify-content-between align-items-center mb-3 bg-light p-2 rounded-3 border flex-wrap gap-2">
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-dark fw-semibold" onclick="set3DView('front')">
+                    <i class="bi bi-house me-1"></i> Front
+                </button>
+                <button type="button" class="btn btn-outline-dark fw-semibold" onclick="set3DView('side')">
+                    <i class="bi bi-building me-1"></i> Side
+                </button>
+                <button type="button" class="btn btn-outline-dark fw-semibold" onclick="set3DView('top')">
+                    <i class="bi bi-arrows-fullscreen me-1"></i> Top View
+                </button>
+                <button type="button" class="btn btn-outline-dark fw-semibold" onclick="set3DView('reset')">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reset View
+                </button>
+            </div>
+            <div>
+                <button type="button" id="autoRotateBtn" class="btn btn-sm btn-outline-danger fw-semibold" onclick="toggleAutoRotate()">
+                    <i class="bi bi-play-circle me-1"></i> Auto-Rotate: ON
+                </button>
+            </div>
+        </div>
+
+        <!-- 3D Canvas Viewport -->
+        <div id="viewer3d-container" style="position: relative; width: 100%; height: 460px; background: linear-gradient(135deg, #1b1d28 0%, #0d0e15 100%); border-radius: 14px; overflow: hidden;" class="shadow-sm">
+            <div id="viewer3d-loading" class="position-absolute top-50 start-50 translate-middle text-center text-white">
+                <div class="spinner-border text-danger mb-2" role="status"></div>
+                <div class="small fw-semibold">Loading Interactive 3D Model...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOCATION INTELLIGENCE & NEARBY FACILITIES -->
+    <div class="row g-4 mb-5">
+        <!-- Nearby Facilities -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-geo-fill text-danger me-2"></i> Location & Nearby Facilities</h5>
+                <p class="text-muted small mb-3">Estimated distance to essential amenities and key neighborhood facilities:</p>
+
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-hospital text-danger me-2"></i> Hospital / Medical Center</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.hospital_dist|default:"1.8 km" }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-capsule text-warning me-2"></i> Pharmacy / Medical Store</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.pharmacy_dist|default:"0.5 km" }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-cart3 text-success me-2"></i> Supermarket / Grocery Store</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.supermarket_dist|default:"1.2 km" }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-mortarboard text-primary me-2"></i> School / Educational Institute</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.school_dist|default:"2.1 km" }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-bank text-info me-2"></i> Bank / ATM</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.bank_dist|default:"1.5 km" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transport & Connectivity -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-signpost-split text-danger me-2"></i> Transport & Road Connectivity</h5>
+                <p class="text-muted small mb-3">Proximity to transit stops, major highways, and transportation hubs:</p>
+
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-sign-turn-right text-success me-2"></i> Main Road / Highway Access</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.main_road_dist|default:"0.4 km" }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-bus-front text-info me-2"></i> Bus Stop</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.bus_stop_dist|default:"0.7 km" }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-train-front text-warning me-2"></i> Railway Station</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.railway_dist|default:"4.3 km" }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-0 border-bottom">
+                        <span><i class="bi bi-airplane text-danger me-2"></i> International Airport</span>
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-bold">{{ prop.airport_dist|default:"25 km" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function showRoomDetails(name, area, desc) {
+    document.getElementById('roomNameTitle').innerText = name;
+    document.getElementById('roomAreaVal').innerText = area;
+    document.getElementById('roomDescVal').innerText = desc;
+}
+
+let is3DInitialized = false;
+
+function toggle3DViewSection() {
+    const card = document.getElementById('3d-viewer-card');
+    const textElem = document.getElementById('toggle3dText');
+    const iconElem = document.getElementById('toggle3dIcon');
+    if (!card) return;
+
+    if (card.style.display === 'none' || card.style.display === '') {
+        card.style.display = 'block';
+        if (textElem) textElem.innerText = 'Hide 3D Plan';
+        if (iconElem) iconElem.className = 'bi bi-eye-slash me-2';
+
+        if (!is3DInitialized) {
+            init3DViewer();
+            is3DInitialized = true;
+        } else {
+            setTimeout(onWindowResize, 50);
+        }
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+        card.style.display = 'none';
+        if (textElem) textElem.innerText = 'View 3D Plan';
+        if (iconElem) iconElem.className = 'bi bi-box-seam me-2';
+    }
+}
+</script>
+
+<!-- Three.js 3D Viewer Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<script>
+let scene, camera, renderer, controls;
+let buildingGroup;
+let isAutoRotating = true;
+
+const modelUrl = "{% if prop.model_3d %}{{ prop.model_3d.url }}{% endif %}";
+const propCategory = "{{ prop.property_category|escapejs }}".toLowerCase();
+const propFloors = "{{ prop.property_floor|escapejs }}";
+
+function init3DViewer() {
+    const container = document.getElementById('viewer3d-container');
+    const loadingElem = document.getElementById('viewer3d-loading');
+    if (!container) return;
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    // 1. Scene
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x131520);
+    scene.fog = new THREE.FogExp2(0x131520, 0.018);
+
+    // 2. Camera
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.set(16, 12, 18);
+
+    // 3. Renderer
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    // 4. OrbitControls
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 + 0.05;
+    controls.minDistance = 5;
+    controls.maxDistance = 60;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.2;
+
+    // 5. Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xfffaed, 1.2);
+    dirLight.position.set(20, 30, 15);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 1024;
+    dirLight.shadow.mapSize.height = 1024;
+    dirLight.shadow.camera.near = 0.5;
+    dirLight.shadow.camera.far = 100;
+    dirLight.shadow.camera.left = -20;
+    dirLight.shadow.camera.right = 20;
+    dirLight.shadow.camera.top = 20;
+    dirLight.shadow.camera.bottom = -20;
+    scene.add(dirLight);
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x333344, 0.5);
+    hemiLight.position.set(0, 40, 0);
+    scene.add(hemiLight);
+
+    // 6. Ground Lawn & Grid Base
+    const groundGeo = new THREE.PlaneGeometry(60, 60);
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0x2d4c28, roughness: 0.9, metalness: 0.1 });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = 0;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const grid = new THREE.GridHelper(50, 25, 0xf35525, 0x444455);
+    grid.position.y = 0.01;
+    scene.add(grid);
+
+    // 7. Load GLTF model or Build Procedural Model
+    if (modelUrl && modelUrl.trim() !== "") {
+        const loader = new THREE.GLTFLoader();
+        loader.load(modelUrl, function (gltf) {
+            buildingGroup = gltf.scene;
+            buildingGroup.traverse(child => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+
+            const box = new THREE.Box3().setFromObject(buildingGroup);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+
+            buildingGroup.position.x += (buildingGroup.position.x - center.x);
+            buildingGroup.position.y += (buildingGroup.position.y - box.min.y);
+            buildingGroup.position.z += (buildingGroup.position.z - center.z);
+
+            const maxDim = Math.max(size.x, size.y, size.z);
+            if (maxDim > 0) {
+                const scale = 12 / maxDim;
+                buildingGroup.scale.set(scale, scale, scale);
+            }
+
+            scene.add(buildingGroup);
+            if (loadingElem) loadingElem.style.display = 'none';
+        }, undefined, function (error) {
+            console.warn("Could not load GLTF model, falling back to procedural 3D building:", error);
+            buildProcedural3DBuilding();
+            if (loadingElem) loadingElem.style.display = 'none';
+        });
+    } else {
+        buildProcedural3DBuilding();
+        if (loadingElem) loadingElem.style.display = 'none';
+    }
+
+    window.addEventListener('resize', onWindowResize, false);
+    animate();
+}
+
+function buildProcedural3DBuilding() {
+    buildingGroup = new THREE.Group();
+
+    let floorCount = parseInt(propFloors) || 2;
+    if (floorCount < 1) floorCount = 1;
+    if (floorCount > 6) floorCount = 6;
+
+    const floorHeight = 2.2;
+    const buildingWidth = propCategory.includes('villa') ? 9 : 8;
+    const buildingDepth = propCategory.includes('villa') ? 7 : 7;
+    const totalHeight = floorCount * floorHeight;
+
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0xf0ece1, roughness: 0.4 });
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.6 });
+    const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x88ccff, transparent: true, opacity: 0.65, roughness: 0.1, transmission: 0.9 });
+    const roofMat = new THREE.MeshStandardMaterial({ color: 0xb23b23, roughness: 0.5 });
+    const doorMat = new THREE.MeshStandardMaterial({ color: 0x4a2e18, roughness: 0.5 });
+
+    for (let f = 0; f < floorCount; f++) {
+        const yPos = (f * floorHeight) + (floorHeight / 2);
+        
+        const slabGeo = new THREE.BoxGeometry(buildingWidth + 0.6, 0.25, buildingDepth + 0.6);
+        const slabMesh = new THREE.Mesh(slabGeo, woodMat);
+        slabMesh.position.set(0, f * floorHeight + 0.125, 0);
+        slabMesh.castShadow = true;
+        slabMesh.receiveShadow = true;
+        buildingGroup.add(slabMesh);
+
+        const wallGeo = new THREE.BoxGeometry(buildingWidth, floorHeight - 0.25, buildingDepth);
+        const wallMesh = new THREE.Mesh(wallGeo, wallMat);
+        wallMesh.position.set(0, yPos + 0.125, 0);
+        wallMesh.castShadow = true;
+        wallMesh.receiveShadow = true;
+        buildingGroup.add(wallMesh);
+
+        const windowGeo = new THREE.BoxGeometry(1.4, 1.2, 0.1);
+        const winPositions = [-2.2, 2.2];
+
+        winPositions.forEach(xPos => {
+            const winFront = new THREE.Mesh(windowGeo, glassMat);
+            winFront.position.set(xPos, yPos + 0.2, (buildingDepth / 2) + 0.06);
+            buildingGroup.add(winFront);
+
+            const winBack = new THREE.Mesh(windowGeo, glassMat);
+            winBack.position.set(xPos, yPos + 0.2, -(buildingDepth / 2) - 0.06);
+            buildingGroup.add(winBack);
+        });
+
+        if (f > 0) {
+            const balconyGeo = new THREE.BoxGeometry(3.6, 0.15, 1.4);
+            const balconyMesh = new THREE.Mesh(balconyGeo, woodMat);
+            balconyMesh.position.set(0, f * floorHeight + 0.1, (buildingDepth / 2) + 0.7);
+            balconyMesh.castShadow = true;
+            buildingGroup.add(balconyMesh);
+
+            const railGeo = new THREE.BoxGeometry(3.6, 0.8, 0.05);
+            const railMesh = new THREE.Mesh(railGeo, glassMat);
+            railMesh.position.set(0, f * floorHeight + 0.5, (buildingDepth / 2) + 1.35);
+            buildingGroup.add(railMesh);
+        }
+    }
+
+    const doorGeo = new THREE.BoxGeometry(1.6, 1.8, 0.12);
+    const doorMesh = new THREE.Mesh(doorGeo, doorMat);
+    doorMesh.position.set(0, 0.9, (buildingDepth / 2) + 0.06);
+    doorMesh.castShadow = true;
+    buildingGroup.add(doorMesh);
+
+    const roofY = totalHeight + 0.125;
+    if (propCategory.includes('condo') || propCategory.includes('penthouse')) {
+        const roofGeo = new THREE.BoxGeometry(buildingWidth + 0.8, 0.4, buildingDepth + 0.8);
+        const roofMesh = new THREE.Mesh(roofGeo, woodMat);
+        roofMesh.position.set(0, roofY + 0.2, 0);
+        roofMesh.castShadow = true;
+        buildingGroup.add(roofMesh);
+    } else {
+        const roofHeight = 2.4;
+        const roofGeo = new THREE.ConeGeometry(buildingWidth * 0.75, roofHeight, 4);
+        const roofMesh = new THREE.Mesh(roofGeo, roofMat);
+        roofMesh.position.set(0, roofY + (roofHeight / 2), 0);
+        roofMesh.rotation.y = Math.PI / 4;
+        roofMesh.castShadow = true;
+        buildingGroup.add(roofMesh);
+    }
+
+    const pathGeo = new THREE.BoxGeometry(2.4, 0.02, 6);
+    const pathMat = new THREE.MeshStandardMaterial({ color: 0x777777, roughness: 0.8 });
+    const pathMesh = new THREE.Mesh(pathGeo, pathMat);
+    pathMesh.position.set(0, 0.015, (buildingDepth / 2) + 3);
+    buildingGroup.add(pathMesh);
+
+    const treeTrunkGeo = new THREE.CylinderGeometry(0.2, 0.3, 2);
+    const treeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
+    const treeFoliageGeo = new THREE.DodecahedronGeometry(1.4);
+    const treeFoliageMat = new THREE.MeshStandardMaterial({ color: 0x3a6635, roughness: 0.7 });
+
+    [-6.5, 6.5].forEach(x => {
+        const trunk = new THREE.Mesh(treeTrunkGeo, treeTrunkMat);
+        trunk.position.set(x, 1, 2);
+        trunk.castShadow = true;
+        buildingGroup.add(trunk);
+
+        const foliage = new THREE.Mesh(treeFoliageGeo, treeFoliageMat);
+        foliage.position.set(x, 2.5, 2);
+        foliage.castShadow = true;
+        buildingGroup.add(foliage);
+    });
+
+    scene.add(buildingGroup);
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    if (controls) controls.update();
+    if (renderer && scene && camera) renderer.render(scene, camera);
+}
+
+function onWindowResize() {
+    const container = document.getElementById('viewer3d-container');
+    if (!container || !renderer || !camera) return;
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+}
+
+function set3DView(viewType) {
+    if (!camera || !controls) return;
+
+    controls.autoRotate = false;
+    isAutoRotating = false;
+    updateAutoRotateBtn();
+
+    switch(viewType) {
+        case 'front':
+            camera.position.set(0, 8, 22);
+            controls.target.set(0, 4, 0);
+            break;
+        case 'side':
+            camera.position.set(22, 8, 0);
+            controls.target.set(0, 4, 0);
+            break;
+        case 'top':
+            camera.position.set(0, 26, 0.1);
+            controls.target.set(0, 0, 0);
+            break;
+        case 'reset':
+        default:
+            camera.position.set(16, 12, 18);
+            controls.target.set(0, 3, 0);
+            controls.autoRotate = true;
+            isAutoRotating = true;
+            updateAutoRotateBtn();
+            break;
+    }
+    controls.update();
+}
+
+function toggleAutoRotate() {
+    if (!controls) return;
+    isAutoRotating = !isAutoRotating;
+    controls.autoRotate = isAutoRotating;
+    updateAutoRotateBtn();
+}
+
+function updateAutoRotateBtn() {
+    const btn = document.getElementById('autoRotateBtn');
+    if (!btn) return;
+    if (isAutoRotating) {
+        btn.className = "btn btn-sm btn-outline-danger fw-semibold";
+        btn.innerHTML = '<i class="bi bi-play-circle me-1"></i> Auto-Rotate: ON';
+    } else {
+        btn.className = "btn btn-sm btn-outline-secondary fw-semibold";
+        btn.innerHTML = '<i class="bi bi-pause-circle me-1"></i> Auto-Rotate: OFF';
+    }
+}
+
+// 3D viewer is lazy-initialized when the user clicks 'View 3D Plan'
+</script>
+
+{% include 'footer.html' %}

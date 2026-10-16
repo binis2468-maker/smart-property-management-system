@@ -287,7 +287,8 @@ Entities in the system include `User`, `Builder`, `ApprovedBuilder`, `Property`,
    - `property_bathroom` (VARCHAR 100)
    - `property_area` (VARCHAR 100)
    - `property_floor` (VARCHAR 100)
-   - `property_parking` (VARCHAR 100)
+   - `property_parking` (VARCHAR 10
+   0)
    - `property_photo` (VARCHAR 100 / ImageField)
 
 5. **`user_app_booking` Table**:
@@ -486,7 +487,7 @@ OK (100% Pass Rate)
 | Test ID | Test Scenario | Input Data | Expected Output | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **TC-01** | User Registration with Invalid Phone | Phone = `12345` | Validation Error: "Phone number must be exactly 10 digits" | **PASS** |
-| **TC-02** | User Registration with Valid Phone | Phone = `9876543210` | Formats phone to `+91 9876543210` & registers user | **PASS** |
+| **TC-02** | User Registration with Valid Phone | Phone = `9876543210` | Formats phone to `+91 9876543210` & register98s user | **PASS** |
 | **TC-03** | Weak Password Test | Password = `villa` | Validation Error: "Must contain uppercase, number, symbol" | **PASS** |
 | **TC-04** | Valid Password Test | Password = `Villa@2025` | Validates successfully | **PASS** |
 | **TC-05** | Unauthenticated Page Access | Access `/add_prop` without session | Redirects to `/login` | **PASS** |

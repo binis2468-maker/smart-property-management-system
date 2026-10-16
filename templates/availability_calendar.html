@@ -1,0 +1,83 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container my-5" style="max-width: 900px;">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-dark text-white p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-bold mb-1"><i class="fa fa-calendar-alt text-warning me-2"></i> Check Property Visit Availability</h4>
+                    <p class="text-light opacity-75 small mb-0">{{ prop.property_name }} &bull; {{ prop.property_location }}</p>
+                </div>
+                <h4 class="fw-bold text-warning mb-0">₹{{ prop.property_budget }}</h4>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            {% if error %}
+            <div class="alert alert-danger rounded-3 alert-dismissible fade show" role="alert">
+                <i class="fa fa-exclamation-triangle me-2"></i> {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <!-- Date Selector Form -->
+            <form method="GET" action="/check_availability/{{ prop.id }}" class="row g-3 align-items-end mb-4 p-3 bg-light rounded-3 border">
+                <div class="col-md-8">
+                    <label class="form-label fw-bold text-dark small">Select Visit Date</label>
+                    <input type="date" name="date" class="form-control" value="{{ selected_date }}" min="{{ today_date }}" onchange="this.form.submit()">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-dark btn-sm w-100 py-2 fw-bold"><i class="fa fa-search me-1"></i> Check Available Slots</button>
+                </div>
+            </form>
+
+            <h5 class="fw-bold mb-3 text-dark">Available Time Slots for <span class="text-danger">{{ selected_date }}</span></h5>
+
+            <form method="POST" action="/schedulevisit_slot/{{ prop.id }}">
+                {% csrf_token %}
+                <input type="hidden" name="visit_date" value="{{ selected_date }}">
+
+                <div class="row g-3 mb-4">
+                    {% for item in slots_status %}
+                    <div class="col-md-6">
+                        <div class="card border p-3 rounded-3 {% if item.is_booked %}bg-light text-muted{% else %}bg-white border-primary-subtle shadow-sm{% endif %}">
+                            <div class="form-check d-flex justify-content-between align-items-center mb-0">
+                                <div>
+                                    <input class="form-check-input" type="radio" name="time_slot" id="slot-{{ forloop.counter }}" value="{{ item.slot }}" {% if item.is_booked %}disabled{% endif %} {% if not item.is_booked and forloop.first %}checked{% endif %}>
+                                    <label class="form-check-label fw-bold ms-2" for="slot-{{ forloop.counter }}">
+                                        <i class="fa fa-clock text-warning me-1"></i> {{ item.slot }}
+                                    </label>
+                                </div>
+                                <div>
+                                    {% if item.is_booked %}
+                                    <span class="badge bg-secondary">Booked / Unavailable</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Available</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                    <a href="/viewprop" class="btn btn-outline-secondary btn-sm rounded-pill px-3"><i class="fa fa-arrow-left me-1"></i> Back to Properties</a>
+                    
+                    {% if builder %}
+                    <a href="/start_chat/{{ builder.id }}/{{ prop.id }}" class="btn btn-outline-primary btn-sm rounded-pill px-3 me-2">
+                        <i class="fa fa-comments me-1"></i> Chat with Builder
+                    </a>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-danger btn-sm rounded-pill px-4 fw-bold">
+                        <i class="fa fa-calendar-check me-1"></i> Confirm & Schedule Visit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

@@ -14,13 +14,33 @@
 
             <div class="form-group file-upload-group">
                 <label for="photo" class="file-upload-label">
-                    <span id="file-name">Upload Property Photo </span>
+                    <span id="file-name">Upload Main Property Photo</span>
                     <input id="photo" name="property_photo" type="file" accept="image/*" class="file-input">
                 </label>
             </div>
 
+            <div class="form-group file-upload-group mt-2 mb-3">
+                <label for="floor_plan" class="file-upload-label bg-light text-dark border">
+                    <span id="floor-file-name">Upload 2D Floor Plan Image (Optional)</span>
+                    <input id="floor_plan" name="floor_plan_image" type="file" accept="image/*" class="file-input">
+                </label>
+            </div>
+
+            <div class="form-group file-upload-group mt-2 mb-3">
+                <label for="model_3d" class="file-upload-label bg-light text-dark border">
+                    <span id="model3d-file-name">Upload 3D Model File (.glb / .gltf - Optional)</span>
+                    <input id="model_3d" name="model_3d" type="file" accept=".glb,.gltf" class="file-input">
+                </label>
+            </div>
+
             <div class="form-group">
-                <input name="property_category" type="text" placeholder="Category (e.g. Luxury Villa, Modern Condo)" required>
+                <select name="property_category" class="form-select border p-2 rounded-2" required>
+                    <option value="">-- Select Classification / Category --</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Apartment">Apartment</option>
+                    <option value="Penthouse">Penthouse</option>
+                    <option value="Condo">Condo</option>
+                </select>
             </div>
             
             <div class="form-group">
@@ -32,7 +52,7 @@
             </div>
 
             <div class="form-group">
-                <input name="property_budget" type="text" placeholder="Budget / Price ($)" required>
+                <input name="property_budget" type="text" placeholder="Budget / Price (₹)" required>
             </div>
 
             <div class="form-group">
@@ -53,6 +73,39 @@
 
             <div class="form-group">
                 <input name="property_parking" type="text" placeholder="Parking (e.g. 2 cars, Yes)" required>
+            </div>
+
+            <hr class="my-3">
+            <h6 class="fw-bold text-dark mb-2">Location & Connectivity Distances (Optional)</h6>
+
+            <div class="row g-2 mb-2">
+                <div class="col-6">
+                    <input name="hospital_dist" type="text" class="form-control form-control-sm" placeholder="Hospital (e.g. 1.8 km)">
+                </div>
+                <div class="col-6">
+                    <input name="pharmacy_dist" type="text" class="form-control form-control-sm" placeholder="Pharmacy (e.g. 0.5 km)">
+                </div>
+                <div class="col-6">
+                    <input name="school_dist" type="text" class="form-control form-control-sm" placeholder="School (e.g. 2.1 km)">
+                </div>
+                <div class="col-6">
+                    <input name="supermarket_dist" type="text" class="form-control form-control-sm" placeholder="Supermarket (e.g. 1.2 km)">
+                </div>
+                <div class="col-6">
+                    <input name="bank_dist" type="text" class="form-control form-control-sm" placeholder="Bank (e.g. 1.5 km)">
+                </div>
+                <div class="col-6">
+                    <input name="bus_stop_dist" type="text" class="form-control form-control-sm" placeholder="Bus Stop (e.g. 0.7 km)">
+                </div>
+                <div class="col-6">
+                    <input name="railway_dist" type="text" class="form-control form-control-sm" placeholder="Railway (e.g. 4.3 km)">
+                </div>
+                <div class="col-6">
+                    <input name="airport_dist" type="text" class="form-control form-control-sm" placeholder="Airport (e.g. 25 km)">
+                </div>
+                <div class="col-12">
+                    <input name="main_road_dist" type="text" class="form-control form-control-sm" placeholder="Main Road (e.g. 0.4 km)">
+                </div>
             </div>
 
             <div class="register-actions">

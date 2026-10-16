@@ -1,0 +1,57 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container my-5" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa fa-comments text-danger me-2"></i> Private Messages</h2>
+            <p class="text-muted small mb-0">Direct one-to-one communication between clients and verified property builders.</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="list-group list-group-flush">
+            {% for item in conv_data %}
+            {% with conv=item.conv %}
+            <a href="/chat_detail/{{ conv.id }}" class="list-group-item list-group-item-action p-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 48px; height: 48px; font-size: 1.2rem;">
+                        {% if role == 'user' %}{{ conv.builder_name|slice:":1" }}{% else %}{{ conv.user_name|slice:":1" }}{% endif %}
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-1">
+                            {% if role == 'user' %}{{ conv.builder_name }}{% else %}{{ conv.user_name }}{% endif %}
+                            {% if conv.property_name %}
+                            <span class="badge bg-light text-dark border ms-2" style="font-weight: 500;">{{ conv.property_name }}</span>
+                            {% endif %}
+                        </h6>
+                        <small class="text-muted d-block text-truncate" style="max-width: 400px;">
+                            {% if item.last_msg %}
+                                <strong>{% if item.last_msg.sender_id == current_id %}You:{% else %}{% if role == 'user' %}{{ conv.builder_name }}:{% else %}{{ conv.user_name }}:{% endif %}{% endif %}</strong> {{ item.last_msg.message }}
+                            {% else %}
+                                Conversation started. Click to chat.
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="text-end">
+                    <small class="text-muted d-block mb-1">{{ conv.updated_at|date:"M d, H:i" }}</small>
+                    {% if item.unread_count > 0 %}
+                    <span class="badge bg-danger rounded-pill">{{ item.unread_count }} New</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% endwith %}
+            {% empty %}
+            <div class="p-5 text-center text-muted">
+                <i class="fa fa-comment-slash display-4 d-block mb-3 text-secondary"></i>
+                <h5>No chat conversations yet.</h5>
+                <p class="small">Conversations start automatically when you request a visit or chat with a builder.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

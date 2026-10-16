@@ -67,6 +67,114 @@ https://templatemo.com/tm-591-villa-agency
     </div>
   </div>
 
+  <style>
+    /* Clean Navbar Alignment & Overlap Prevention Styles */
+    .header-area .main-nav {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+    }
+    .header-area .main-nav ul.nav {
+      display: flex !important;
+      align-items: center !important;
+      flex-wrap: nowrap !important;
+      margin-top: 0 !important;
+      justify-content: flex-end !important;
+      gap: 2px !important;
+      float: right;
+    }
+    .header-area .main-nav .nav li {
+      padding-left: 2px !important;
+      padding-right: 2px !important;
+      height: 100px;
+      line-height: 100px;
+      display: flex;
+      align-items: center;
+    }
+    .header-area .main-nav .nav li a {
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      white-space: nowrap !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+    .header-area .main-nav .nav li:last-child a {
+      background-color: #1e1e1e !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      border-radius: 20px !important;
+      padding-left: 0px !important;
+      padding-right: 14px !important;
+      height: 40px !important;
+      line-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      white-space: nowrap !important;
+      transition: all 0.3s ease 0s;
+    }
+    .header-area .main-nav .nav li:last-child a i {
+      background-color: #f35525 !important;
+      color: #ffffff !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 36px !important;
+      height: 36px !important;
+      line-height: 36px !important;
+      margin-right: 8px !important;
+      border-radius: 50% !important;
+      margin-left: 2px !important;
+    }
+    .header-area .main-nav .nav li:last-child:hover a {
+      background-color: #f35525 !important;
+      color: #ffffff !important;
+    }
+    .header-area .main-nav .nav li:last-child:hover a i {
+      background-color: #1e1e1e !important;
+      color: #ffffff !important;
+    }
+
+    @media (max-width: 1200px) and (min-width: 768px) {
+      .header-area .main-nav .nav li a {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+        font-size: 13px !important;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .header-area .main-nav ul.nav {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        flex-wrap: wrap !important;
+        float: none !important;
+        margin-top: 80px !important;
+      }
+      .header-area .main-nav .nav li {
+        height: auto !important;
+        line-height: normal !important;
+        width: 100% !important;
+      }
+      .header-area .main-nav .nav li a {
+        padding: 10px 15px !important;
+        height: auto !important;
+        line-height: normal !important;
+        width: 100% !important;
+        font-size: 14px !important;
+      }
+      .header-area .main-nav .nav li:last-child a {
+        background-color: #1e1e1e !important;
+        margin: 10px 15px !important;
+        width: calc(100% - 30px) !important;
+        justify-content: center !important;
+      }
+    }
+  </style>
+
   <!-- ***** Header Area Start ***** -->
   <header class="header-area header-sticky">
     <div class="container">
@@ -74,51 +182,54 @@ https://templatemo.com/tm-591-villa-agency
             <div class="col-12">
                 <nav class="main-nav">
                     <!-- ***** Logo Start ***** -->
-                    <a href="index.html" class="logo">
+                    <a href="/" class="logo">
                         <h1>Villa</h1>
                     </a>
                     <!-- ***** Logo End ***** -->
                     <!-- ***** Menu Start ***** -->
                     
-                  {% if request.session.admin %}
-											<ul class="nav">
-                      <li><a href="dashboardindex" class="active">Home</a></li>
-                      <li><a href="reqbuilder">Builder request</a></li>
-                      <li><a href="viewprop">Property Details</a></li>
-                      <li><a href="contact.html">Contact Us</a></li>
-                      <li><a href="viewquery">Queries</a></li>
-                      <li><a href="logout">Logout</a></li>
-                      <li><a href="#"><i class="fa fa-calendar"></i> Schedule a visit</a></li>
-                  </ul>
-											{% elif request.session.uid %}
-											<ul class="nav">
-                      <li><a href="index" class="active">Home</a></li>
-                      <li><a href="scheduledvisit">Scheduled visits</a></li>
-                      <li><a href="viewprop">Property Details</a></li>
-                      <li><a href="">Contact Us</a></li>
-                      <li><a href="logout">Logout</a></li>
-                      <li><a href="#"><i class="fa fa-calendar"></i> Schedule a visit</a></li>
-                  </ul>
-                  {% elif request.session.bid %}
-											<ul class="nav">
-                      <li><a href="index" class="active">Home</a></li>
-                      <li><a href="add_prop">Add Properties</a></li>
-                      <li><a href="myprop">My Property</a></li>
-                      <li><a href="contact.html">Contact Us</a></li>
-                      <li><a href="logout">Logout</a></li>
-                      <li><a href="#"><i class="fa fa-calendar"></i> Schedule a visit</a></li>
-                  </ul>
-
-											{% else %}
-											<ul class="nav">
-                      <li><a href="index" class="active">Home</a></li>
-                      <li><a href="properties.html">Properties</a></li>
-                      <li><a href="viewprop">Property Details</a></li>
-                      <li><a href="contact.html">Contact Us</a></li>
-                      <li><a href="login">Login</a></li>
-                      <li><a href="#"><i class="fa fa-calendar"></i> Schedule a visit</a></li>
-                  </ul>
-											{% endif %}  
+                    {% if request.session.admin %}
+                    <ul class="nav">
+                      <li><a href="/dashboardindex">Dashboard</a></li>
+                      <li><a href="/viewprop">Properties</a></li>
+                      <li><a href="/my_visits">Visits</a></li>
+                      <li><a href="/my_bookings">Bookings</a></li>
+                      <li><a href="/reqbuilder">Builders</a></li>
+                      <li><a href="/viewquery">Queries</a></li>
+                      <li><a href="/notifications"><i class="fa fa-bell"></i> Alerts {% if unread_notif_count > 0 %}<span class="badge bg-danger rounded-pill">{{ unread_notif_count }}</span>{% endif %}</a></li>
+                      <li><a href="/logout"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                    {% elif request.session.uid %}
+                    <ul class="nav">
+                      <li><a href="/">Home</a></li>
+                      <li><a href="/viewprop">Properties</a></li>
+                      <li><a href="/my_visits">My Visits</a></li>
+                      <li><a href="/my_bookings">My Bookings</a></li>
+                      <li><a href="/chat_list"><i class="fa fa-comments"></i> Chat {% if unread_chat_count > 0 %}<span class="badge bg-danger rounded-pill">{{ unread_chat_count }}</span>{% endif %}</a></li>
+                      <li><a href="/notifications"><i class="fa fa-bell"></i> Alerts {% if unread_notif_count > 0 %}<span class="badge bg-danger rounded-pill">{{ unread_notif_count }}</span>{% endif %}</a></li>
+                      <li><a href="/logout"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                    {% elif request.session.bid %}
+                    <ul class="nav">
+                      <li><a href="/">Home</a></li>
+                      <li><a href="/myprop">My Properties</a></li>
+                      <li><a href="/add_prop">Add Property</a></li>
+                      <li><a href="/my_visits">Visits</a></li>
+                      <li><a href="/my_bookings">Bookings</a></li>
+                      <li><a href="/chat_list"><i class="fa fa-comments"></i> Messages {% if unread_chat_count > 0 %}<span class="badge bg-danger rounded-pill">{{ unread_chat_count }}</span>{% endif %}</a></li>
+                      <li><a href="/notifications"><i class="fa fa-bell"></i> Alerts {% if unread_notif_count > 0 %}<span class="badge bg-danger rounded-pill">{{ unread_notif_count }}</span>{% endif %}</a></li>
+                      <li><a href="/logout"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                    {% else %}
+                    <ul class="nav">
+                      <li><a href="/">Home</a></li>
+                      <li><a href="/viewprop">Properties</a></li>
+                      <li><a href="/#contact">Contact Us</a></li>
+                      <li><a href="/login">Login</a></li>
+                      <li><a href="/register">Register</a></li>
+                      <li><a href="/viewprop"><i class="fa fa-calendar"></i> Check Availability</a></li>
+                    </ul>
+                    {% endif %}  
                     <a class='menu-trigger'>
                         <span>Menu</span>
                     </a>

@@ -11,7 +11,7 @@
             {% endif %}
 
             <span class="badge bg-dark style-badge" style="position: absolute; top: 12px; left: 12px; opacity: 0.9;">
-                {{ prop.property_category }}
+                Classification: {{ prop.property_category }}
             </span>
 
             <span class="badge-rating" style="position: absolute; top: 12px; right: 12px;">
@@ -22,7 +22,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title fw-bold text-dark mb-0">{{ prop.property_name }}</h5>
-                <h5 class="fw-bold text-danger mb-0">${{ prop.property_budget }}</h5>
+                <h5 class="fw-bold text-danger mb-0">₹{{ prop.property_budget }}</h5>
             </div>
 
             <p class="card-text small text-muted mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ prop.property_location }}</p>
@@ -49,8 +49,13 @@
                 <span><i class="bi bi-p-square me-1"></i> {{ prop.property_parking }}</span>
             </div>
 
+            <!-- View Details & 2D Floor Plan Button -->
+            <a href="/property_details/{{ prop.id }}" class="btn btn-sm btn-outline-dark w-100 fw-semibold mb-2" style="font-size: 0.78rem;">
+                <i class="bi bi-diagram-2 me-1"></i> View Details & 2D Floor Plan
+            </a>
+
             <!-- Quick Tools: EMI Calculator & Compare -->
-            <div class="d-flex gap-2 mt-3">
+            <div class="d-flex gap-2">
                 <button class="btn btn-outline-dark btn-sm flex-fill" onclick="openEMICalculator('{{ prop.property_name }}', '{{ prop.property_budget }}')" style="font-size: 0.78rem;">
                     <i class="bi bi-calculator me-1"></i> EMI Calculator
                 </button>
@@ -75,20 +80,42 @@
         </div>
 
         {% elif request.session.uid %}
-        <div class="card-footer d-flex justify-content-between align-items-center bg-white border-top-0 pb-3">
-            <a href="{% url 'schedulevisit' id=prop.id %}" class="btn btn-sm btn-villa-orange">
-                <i class="bi bi-calendar-check me-1"></i> Schedule Visit
-            </a>
-            
-            <button class="btn btn-sm btn-outline-secondary" onclick="openReviewModal('{{ prop.id }}', '{{ prop.property_name }}')" title="Reviews">
-                <i class="bi bi-chat-left-text me-1"></i> Review
-            </button>
+        <div class="card-footer d-flex flex-column gap-2 bg-white border-top-0 pb-3">
+            <div class="d-flex justify-content-between align-items-center gap-1">
+                <a href="/check_availability/{{ prop.id }}" class="btn btn-sm btn-villa-orange flex-fill" style="font-size: 0.78rem;">
+                    <i class="bi bi-calendar-check me-1"></i> Check Availability
+                </a>
+                
+                <a href="/start_chat/{{ prop.user_id }}/{{ prop.id }}" class="btn btn-sm btn-outline-primary" style="font-size: 0.78rem;" title="Private Chat with Builder">
+                    <i class="bi bi-chat-dots me-1"></i> Chat
+                </a>
 
-            <a href="{% url 'wishlist' id=prop.id %}" 
-               class="wishlist-btn {% if prop.property_name in wishlist_items %}active{% endif %}" 
-               title="{% if prop.property_name in wishlist_items %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}">
-                <i class="bi bi-heart-fill"></i>
-            </a>
+                <a href="{% url 'wishlist' id=prop.id %}" 
+                   class="wishlist-btn {% if prop.property_name in wishlist_items %}active{% endif %}" 
+                   title="{% if prop.property_name in wishlist_items %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}">
+                    <i class="bi bi-heart-fill"></i>
+                </a>
+            </div>
+
+            <div class="d-flex gap-1">
+                {% if prop.user_booking %}
+                    {% if prop.user_booking.advance_payment_status == 'Successful' or prop.user_booking.booking_status == 'Confirmed' %}
+                    <span class="badge bg-success w-100 py-2"><i class="bi bi-check-circle me-1"></i> Advance Paid / Booking Confirmed</span>
+                    {% elif prop.user_booking.booking_status == 'Approved' or prop.user_booking.booking_status == 'Payment Pending' %}
+                    <a href="/pay_advance/{{ prop.user_booking.id }}" class="btn btn-sm btn-warning w-100 fw-bold" style="font-size: 0.78rem;">
+                        <i class="bi bi-credit-card me-1"></i> Pay Advance (₹{{ prop.user_booking.advance_amount }})
+                    </a>
+                    {% else %}
+                    <a href="/my_bookings" class="btn btn-sm btn-outline-info w-100 fw-bold" style="font-size: 0.78rem;">
+                        <i class="bi bi-clock-history me-1"></i> Booking {{ prop.user_booking.booking_status }}
+                    </a>
+                    {% endif %}
+                {% else %}
+                <a href="/request_booking/{{ prop.id }}" class="btn btn-sm btn-outline-danger w-100 fw-bold" style="font-size: 0.78rem;">
+                    <i class="bi bi-house-check me-1"></i> Request Booking
+                </a>
+                {% endif %}
+            </div>
         </div>
 
         {% elif request.session.admin %}
@@ -102,7 +129,7 @@
         {% else %}
         <div class="card-footer d-flex justify-content-between bg-white border-top-0 pb-3">
             <a href="/login" class="btn btn-sm btn-outline-primary w-100">
-                Login to Schedule Visit / Review
+                Login to Check Availability / Schedule Visit
             </a>
         </div>
         {% endif %}

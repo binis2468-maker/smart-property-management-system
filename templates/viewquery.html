@@ -1,39 +1,161 @@
 {% load static %}
-
 {% include 'header.html' %}
-<div class="container mt-5 mb-5">
-  <div class="text-center mb-4">
-    <h2>Client Inquiries & Queries</h2>
-    <p class="text-muted">Messages sent through the contact form on the website.</p>
+
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1"><i class="fa fa-comments text-danger me-2"></i> Client Inquiries, Feedback & Reported Issues</h2>
+      <p class="text-muted small mb-0">Review issues reported by users, contact inquiries, resolution notes, and customer satisfaction ratings.</p>
+    </div>
   </div>
+
   <div class="row">
     {% for i in response %}
     <div class="col-lg-4 col-md-6 mb-4">
-      <div class="card shadow-sm h-100 border-0">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-          <span class="fw-bold"><i class="fa fa-envelope"></i> {{ i.subject|default:"Inquiry" }}</span>
-          <span class="badge bg-secondary">#{{ i.id }}</span>
+      <div class="card shadow-sm h-100 border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+          <span class="fw-bold text-truncate" style="max-width: 200px;" title="{{ i.problem_type|default:i.subject }}">
+            <i class="fa fa-exclamation-circle text-danger me-1"></i> {{ i.problem_type|default:i.subject|default:"General Inquiry" }}
+          </span>
+          <div>
+            {% if i.status == 'Resolved' %}
+            <span class="badge bg-success">Resolved</span>
+            {% elif i.status == 'Read' %}
+            <span class="badge bg-info text-dark">Read</span>
+            {% else %}
+            <span class="badge bg-warning text-dark">New</span>
+            {% endif %}
+          </div>
         </div>
+
         <div class="card-body">
-          <h5 class="card-title text-primary">{{ i.name }}</h5>
-          <p class="card-text small mb-2">
-            <i class="fa fa-at text-muted"></i> <strong>Email:</strong> <a href="mailto:{{ i.email }}">{{ i.email }}</a>
-          </p>
+          <!-- User Details -->
+          <div class="mb-3">
+            <h5 class="card-title fw-bold text-dark mb-1">{{ i.name }}</h5>
+            <div class="small text-muted"><i class="fa fa-envelope me-1"></i> <a href="mailto:{{ i.email }}" class="text-decoration-none text-muted">{{ i.email }}</a></div>
+            {% if i.created_at %}
+            <div class="small text-muted"><i class="fa fa-clock me-1"></i> {{ i.created_at|date:"M d, Y H:i" }}</div>
+            {% endif %}
+          </div>
+
           <hr class="my-2">
-          <p class="card-text">
-            <strong>Message:</strong><br>
-            {{ i.message }}
-          </p>
+
+          <!-- Problem Type Tag -->
+          <div class="mb-2">
+            <small class="text-muted d-block fw-semibold mb-1">Problem Type:</small>
+            <span class="badge bg-light text-dark border px-2 py-1 fw-bold">
+              {{ i.problem_type|default:i.subject|default:"Website Problem" }}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <small class="text-muted d-block fw-semibold mb-1">Description:</small>
+            {% if i.message %}
+            <p class="card-text text-secondary small bg-light p-2 rounded-3 border mb-0" style="white-space: pre-line;">
+              {{ i.message }}
+            </p>
+            {% else %}
+            <p class="card-text small text-muted fst-italic mb-0 bg-light p-2 rounded-3 border">
+              No description provided
+            </p>
+            {% endif %}
+          </div>
+
+          <!-- Rating -->
+          <div class="mb-3">
+            <small class="text-muted d-block fw-semibold mb-1">Rating / Satisfaction:</small>
+            {% if i.rating %}
+            <span class="badge bg-warning text-dark px-2 py-1 fw-bold">
+              <i class="fa fa-star me-1"></i> {{ i.rating }} / 5 Stars
+            </span>
+            {% else %}
+            <span class="badge bg-light text-muted border px-2 py-1">
+              Not rated
+            </span>
+            {% endif %}
+          </div>
+
+          <!-- Admin Resolution Details (if resolved or exists) -->
+          {% if i.resolution_details or i.status == 'Resolved' %}
+          <div class="mb-3">
+            <small class="text-muted d-block fw-semibold mb-1">Admin Resolution:</small>
+            <p class="card-text text-dark small bg-success-subtle p-2 rounded-3 border border-success-subtle mb-0" style="white-space: pre-line;">
+              {{ i.resolution_details|default:"Issue was checked and resolved by Admin." }}
+            </p>
+            {% if i.resolved_at %}
+            <div class="small text-muted mt-1"><i class="fa fa-check-circle text-success me-1"></i> Resolved: {{ i.resolved_at|date:"M d, Y H:i" }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <!-- Status Actions -->
+          <div class="d-flex gap-2 mt-3 pt-2 border-top">
+            {% if i.status == 'New' %}
+            <a href="/update_query_status/{{ i.id }}/Read" class="btn btn-outline-info btn-sm flex-fill fw-semibold">
+              <i class="fa fa-check me-1"></i> Mark Read
+            </a>
+            {% endif %}
+
+            {% if i.status != 'Resolved' %}
+            <button type="button" class="btn btn-success btn-sm flex-fill fw-semibold" data-bs-toggle="modal" data-bs-target="#resolveModal{{ i.id }}">
+              <i class="fa fa-check-double me-1"></i> Resolve
+            </button>
+            {% else %}
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 w-100 fw-bold">
+              <i class="fa fa-check-circle me-1"></i> Issue Resolved
+            </span>
+            {% endif %}
+          </div>
+
         </div>
       </div>
     </div>
+
+    <!-- Resolution Note Input Modal -->
+    {% if i.status != 'Resolved' %}
+    <div class="modal fade" id="resolveModal{{ i.id }}" tabindex="-1" aria-labelledby="resolveModalLabel{{ i.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+          <form method="POST" action="/update_query_status/{{ i.id }}/Resolved">
+            {% csrf_token %}
+            <div class="modal-header bg-dark text-white p-3">
+              <h5 class="modal-title fw-bold text-white fs-6" id="resolveModalLabel{{ i.id }}">
+                <i class="fa fa-check-circle text-success me-2"></i> Resolve Issue #{{ i.id }}
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+              <div class="mb-3">
+                <label class="form-label fw-semibold text-muted small mb-1">Customer / Problem Type:</label>
+                <div class="fw-bold text-dark">{{ i.name }} — <span class="text-danger">{{ i.problem_type|default:i.subject }}</span></div>
+              </div>
+              <div class="mb-3">
+                <label for="resolution_details_{{ i.id }}" class="form-label fw-bold text-dark small">Resolution Details / Explanation <span class="text-danger">*</span></label>
+                <textarea id="resolution_details_{{ i.id }}" name="resolution_details" class="form-control" rows="3" placeholder="e.g. Website login issue was checked and fixed." required></textarea>
+                <small class="text-muted">Enter resolution details to notify the customer.</small>
+              </div>
+            </div>
+            <div class="modal-footer bg-light p-3">
+              <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-success btn-sm rounded-pill px-4 fw-bold">
+                <i class="fa fa-check me-1"></i> Confirm Resolve
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
     {% empty %}
     <div class="col-12 text-center py-5 text-muted">
-      <h4>No customer inquiries found.</h4>
-      <p>Inquiries submitted via the Contact Us form will appear here.</p>
+      <i class="fa fa-inbox display-4 d-block mb-3 text-secondary"></i>
+      <h4>No customer inquiries or feedback reports found.</h4>
+      <p class="small">Reports submitted by users will appear here.</p>
     </div>
     {% endfor %}
   </div>
 </div>
 
-{% include 'footer.html' %}
+{% include 'footer.html' %}

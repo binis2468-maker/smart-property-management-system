@@ -1,0 +1,56 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container my-5" style="max-width: 800px;">
+    <div class="card shadow border-0 rounded-4 overflow-hidden">
+        <!-- Chat Header -->
+        <div class="card-header bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <a href="/chat_list" class="btn btn-outline-light btn-sm rounded-circle" style="width: 32px; height: 32px; padding: 3px 0;"><i class="fa fa-arrow-left"></i></a>
+                <div>
+                    <h6 class="fw-bold mb-0">
+                        {% if role == 'user' %}{{ conv.builder_name }}{% else %}{{ conv.user_name }}{% endif %}
+                    </h6>
+                    <small class="text-warning" style="font-size: 0.78rem;"><i class="fa fa-building me-1"></i> {{ conv.property_name }}</small>
+                </div>
+            </div>
+            <a href="/my_visits" class="btn btn-outline-warning btn-sm rounded-pill px-3" style="font-size: 0.8rem;"><i class="fa fa-calendar-alt me-1"></i> View Visits</a>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div class="card-body p-4 bg-light" id="chat-messages-container" style="height: 420px; overflow-y: auto;">
+            {% for m in messages_list %}
+            <div class="d-flex flex-column mb-3 {% if m.sender_id == sender_id %}align-items-end{% else %}align-items-start{% endif %}">
+                <div class="p-3 rounded-4 shadow-sm text-break" 
+                     style="max-width: 75%; font-size: 0.9rem; {% if m.sender_id == sender_id %}background: #f35525; color: #ffffff; border-bottom-right-radius: 2px;{% else %}background: #ffffff; color: #1e1e1e; border-bottom-left-radius: 2px; border: 1px solid #e9ecef;{% endif %}">
+                    {{ m.message }}
+                </div>
+                <small class="text-muted mt-1" style="font-size: 0.7rem;">{{ m.timestamp|date:"H:i | M d" }}</small>
+            </div>
+            {% empty %}
+            <div class="text-center py-5 text-muted">
+                <i class="fa fa-comments display-4 d-block mb-3 text-secondary"></i>
+                <p class="small">No messages in this chat yet. Type below to send a message.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Chat Input Form -->
+        <div class="card-footer bg-white p-3 border-top">
+            <form method="POST" action="/send_chat_message/{{ conv.id }}" class="d-flex gap-2">
+                {% csrf_token %}
+                <input type="text" name="message" class="form-control rounded-pill px-4" placeholder="Type your private message..." required autocomplete="off">
+                <button type="submit" class="btn btn-danger rounded-circle px-3"><i class="fa fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const container = document.getElementById("chat-messages-container");
+        if (container) container.scrollTop = container.scrollHeight;
+    });
+</script>
+
+{% include 'footer.html' %}

@@ -25,9 +25,39 @@
                 {% endif %}
             </div>
 
+            <div class="form-group file-upload-group mt-2 mb-3">
+                <label for="floor_plan" class="file-upload-label bg-light text-dark border">
+                    <span id="floor-file-name">Change 2D Floor Plan Image (Optional)</span>
+                    <input id="floor_plan" name="floor_plan_image" type="file" accept="image/*" class="file-input">
+                </label>
+                {% if prop.floor_plan_image %}
+                <div class="mt-2 text-center">
+                    <small class="text-muted d-block">Current 2D Floor Plan:</small>
+                    <img src="{{ prop.floor_plan_image.url }}" alt="Floor Plan" width="180" class="rounded mt-1 border" style="object-fit: cover; max-height: 120px;">
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group file-upload-group mt-2 mb-3">
+                <label for="model_3d" class="file-upload-label bg-light text-dark border">
+                    <span id="model3d-file-name">Change 3D Model File (.glb / .gltf - Optional)</span>
+                    <input id="model_3d" name="model_3d" type="file" accept=".glb,.gltf" class="file-input">
+                </label>
+                {% if prop.model_3d %}
+                <div class="mt-2 text-center">
+                    <small class="text-success fw-bold d-block"><i class="bi bi-box me-1"></i> Custom 3D Model Uploaded ({{ prop.model_3d.name }})</small>
+                </div>
+                {% endif %}
+            </div>
+
             <div class="form-group">
-                <label class="form-label small text-muted">Category</label>
-                <input name="property_category" type="text" value="{{ prop.property_category }}" placeholder="Category (e.g. Luxury Villa)" required>
+                <label class="form-label small text-muted">Category / Classification</label>
+                <select name="property_category" class="form-select border p-2 rounded-2" required>
+                    <option value="Villa" {% if prop.property_category == 'Villa' %}selected{% endif %}>Villa</option>
+                    <option value="Apartment" {% if prop.property_category == 'Apartment' or prop.property_category == 'appartment' %}selected{% endif %}>Apartment</option>
+                    <option value="Penthouse" {% if prop.property_category == 'Penthouse' %}selected{% endif %}>Penthouse</option>
+                    <option value="Condo" {% if prop.property_category == 'Condo' %}selected{% endif %}>Condo</option>
+                </select>
             </div>
             
             <div class="form-group">
@@ -41,7 +71,7 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label small text-muted">Budget / Price ($)</label>
+                <label class="form-label small text-muted">Budget / Price (₹)</label>
                 <input name="property_budget" type="text" value="{{ prop.property_budget }}" placeholder="Budget" required>
             </div>
 
@@ -68,6 +98,48 @@
             <div class="form-group">
                 <label class="form-label small text-muted">Parking</label>
                 <input name="property_parking" type="text" value="{{ prop.property_parking }}" placeholder="Parking (e.g. 2 spots)" required>
+            </div>
+
+            <hr class="my-3">
+            <h6 class="fw-bold text-dark mb-2">Location & Connectivity Distances</h6>
+
+            <div class="row g-2 mb-2">
+                <div class="col-6">
+                    <label class="form-label small text-muted mb-0">Hospital</label>
+                    <input name="hospital_dist" type="text" class="form-control form-control-sm" value="{{ prop.hospital_dist|default:'1.5 km' }}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small text-muted mb-0">Pharmacy</label>
+                    <input name="pharmacy_dist" type="text" class="form-control form-control-sm" value="{{ prop.pharmacy_dist|default:'0.5 km' }}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small text-muted mb-0">School</label>
+                    <input name="school_dist" type="text" class="form-control form-control-sm" value="{{ prop.school_dist|default:'2.0 km' }}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small text-muted mb-0">Supermarket</label>
+                    <input name="supermarket_dist" type="text" class="form-control form-control-sm" value="{{ prop.supermarket_dist|default:'1.2 km' }}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small text-muted mb-0">Bank</label>
+                    <input name="bank_dist" type="text" class="form-control form-control-sm" value="{{ prop.bank_dist|default:'1.0 km' }}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small text-muted mb-0">Bus Stop</label>
+                    <input name="bus_stop_dist" type="text" class="form-control form-control-sm" value="{{ prop.bus_stop_dist|default:'0.4 km' }}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small text-muted mb-0">Railway</label>
+                    <input name="railway_dist" type="text" class="form-control form-control-sm" value="{{ prop.railway_dist|default:'3.5 km' }}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small text-muted mb-0">Airport</label>
+                    <input name="airport_dist" type="text" class="form-control form-control-sm" value="{{ prop.airport_dist|default:'22 km' }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label small text-muted mb-0">Main Road</label>
+                    <input name="main_road_dist" type="text" class="form-control form-control-sm" value="{{ prop.main_road_dist|default:'0.3 km' }}">
+                </div>
             </div>
 
             <div class="register-actions">

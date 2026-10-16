@@ -1,0 +1,130 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa fa-calendar-alt text-danger me-2"></i> Scheduled Site Visits</h2>
+            <p class="text-muted small mb-0">Track visit requests, view confirmed appointments, or suggest alternative times.</p>
+        </div>
+        <a href="/viewprop" class="btn btn-outline-dark btn-sm rounded-pill px-3"><i class="fa fa-plus me-1"></i> New Visit Request</a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Property</th>
+                        <th>Client / Contact</th>
+                        <th>Visit Date & Time Slot</th>
+                        <th>Status</th>
+                        <th>Actions & Messaging</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in visits %}
+                    <tr>
+                        <td>
+                            <div class="fw-bold text-dark">{{ v.property_name }}</div>
+                            <small class="text-muted"><i class="fa fa-map-marker-alt text-danger me-1"></i> {{ v.property_location }}</small>
+                            <div class="small fw-semibold text-danger">₹{{ v.property_budget }}</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ v.user_name }}</div>
+                            <small class="text-muted d-block">{{ v.user_email }}</small>
+                            <small class="text-muted d-block">{{ v.user_phone }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-primary"><i class="fa fa-calendar me-1"></i> {{ v.visit_date }}</div>
+                            <div class="small text-dark fw-semibold"><i class="fa fa-clock text-warning me-1"></i> {{ v.time_slot }}</div>
+                            {% if v.suggested_time %}
+                            <small class="badge bg-warning text-dark mt-1">Suggested: {{ v.suggested_time }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if v.status == 'Confirmed' %}
+                            <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa fa-check-circle me-1"></i> Confirmed</span>
+                            {% elif v.status == 'Pending' %}
+                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="fa fa-clock me-1"></i> Pending Approval</span>
+                            {% elif v.status == 'Rescheduled' %}
+                            <span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="fa fa-exchange-alt me-1"></i> Rescheduled</span>
+                            {% else %}
+                            <span class="badge bg-danger rounded-pill px-3 py-2"><i class="fa fa-times-circle me-1"></i> {{ v.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column gap-1">
+                                <!-- Builder Actions -->
+                                {% if request.session.bid and v.status == 'Pending' %}
+                                <div class="d-flex gap-1">
+                                    <a href="/respond_visit/{{ v.id }}/accept" class="btn btn-success btn-sm px-2 py-1"><i class="fa fa-check"></i> Accept</a>
+                                    <a href="/respond_visit/{{ v.id }}/reject" class="btn btn-danger btn-sm px-2 py-1" onclick="return confirm('Reject visit?');"><i class="fa fa-times"></i></a>
+                                </div>
+                                <button type="button" class="btn btn-outline-warning btn-sm py-1 mt-1" data-bs-toggle="collapse" data-bs-target="#suggest-box-{{ v.id }}">
+                                    <i class="fa fa-exchange-alt me-1"></i> Suggest Time
+                                </button>
+                                
+                                <div class="collapse mt-2" id="suggest-box-{{ v.id }}">
+                                    <form method="POST" action="/respond_visit/{{ v.id }}/suggest" class="input-group input-group-sm">
+                                        {% csrf_token %}
+                                        <input type="text" name="suggested_time" class="form-control" placeholder="e.g. 4:00 PM" required>
+                                        <button type="submit" class="btn btn-dark">Send</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+
+                                <!-- Chat Link -->
+                                <a href="/start_chat/{{ v.builder_id }}/{{ v.property_id }}" class="btn btn-outline-primary btn-sm py-1">
+                                    <i class="fa fa-comments me-1"></i> Chat
+                                </a>
+
+                                <!-- Post-Visit Booking Request (for User if Visit is Confirmed) -->
+                                {% if request.session.uid and v.status == 'Confirmed' %}
+                                    {% if v.booking %}
+                                        {% if v.booking.advance_payment_status == 'Successful' or v.booking.booking_status == 'Confirmed' %}
+                                        <span class="badge bg-success py-2 px-3 fw-bold mt-1">
+                                            <i class="fa fa-check-circle me-1"></i> Booking Confirmed / Advance Paid
+                                        </span>
+                                        {% elif v.booking.booking_status == 'Approved' or v.booking.booking_status == 'Payment Pending' %}
+                                        <a href="/pay_advance/{{ v.booking.id }}" class="btn btn-warning btn-sm py-1 mt-1 fw-bold">
+                                            <i class="fa fa-credit-card me-1"></i> Pay Advance (₹{{ v.booking.advance_amount }})
+                                        </a>
+                                        {% elif v.booking.booking_status == 'Requested' %}
+                                        <span class="badge bg-info text-dark py-2 px-3 fw-bold mt-1">
+                                            <i class="fa fa-clock me-1"></i> Booking Requested
+                                        </span>
+                                        {% elif v.booking.booking_status == 'Rejected' %}
+                                        <span class="badge bg-danger py-2 px-3 fw-bold mt-1">
+                                            <i class="fa fa-times-circle me-1"></i> Booking Rejected
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-secondary py-2 px-3 fw-bold mt-1">
+                                            <i class="fa fa-info-circle me-1"></i> {{ v.booking.booking_status }}
+                                        </span>
+                                        {% endif %}
+                                    {% else %}
+                                    <a href="/request_booking/{{ v.property_id }}" class="btn btn-danger btn-sm py-1 mt-1 fw-bold">
+                                        <i class="fa fa-home me-1"></i> Request Booking
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fa fa-calendar-times display-4 d-block mb-3 text-secondary"></i>
+                            <h5>No scheduled visits found.</h5>
+                            <p class="small">Explore properties and schedule site visits anytime.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

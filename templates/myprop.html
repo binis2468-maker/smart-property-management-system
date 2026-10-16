@@ -121,12 +121,12 @@
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label small fw-bold text-muted">Min Price ($)</label>
+                <label class="form-label small fw-bold text-muted">Min Price (₹)</label>
                 <input type="number" name="min_price" class="form-control form-control-sm" placeholder="e.g. 100000" value="{{ selected_min_price }}">
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label small fw-bold text-muted">Max Price ($)</label>
+                <label class="form-label small fw-bold text-muted">Max Price (₹)</label>
                 <input type="number" name="max_price" class="form-control form-control-sm" placeholder="e.g. 2000000" value="{{ selected_max_price }}">
             </div>
 
@@ -194,7 +194,7 @@
                 <h6 id="emi-prop-title" class="fw-bold text-danger mb-3"></h6>
                 
                 <div class="mb-3">
-                    <label class="form-label small fw-bold">Property Price ($)</label>
+                    <label class="form-label small fw-bold">Property Price (₹)</label>
                     <input type="number" id="emi-price" class="form-control" oninput="calculateEMI()">
                 </div>
 
@@ -216,10 +216,10 @@
 
                 <div class="p-3 rounded-3 bg-light text-center border">
                     <small class="text-muted d-block uppercase fw-bold">Estimated Monthly Payment (EMI)</small>
-                    <h2 id="emi-result" class="fw-bold text-success my-1">$0</h2>
+                    <h2 id="emi-result" class="fw-bold text-success my-1">₹0</h2>
                     <div class="small text-muted mt-2 d-flex justify-content-between">
-                        <span>Loan Amount: <strong id="emi-loan-amt">$0</strong></span>
-                        <span>Total Interest: <strong id="emi-interest-amt">$0</strong></span>
+                        <span>Loan Amount: <strong id="emi-loan-amt">₹0</strong></span>
+                        <span>Total Interest: <strong id="emi-interest-amt">₹0</strong></span>
                     </div>
                 </div>
             </div>
@@ -321,9 +321,9 @@
         const totalPayable = emi * months;
         const totalInterest = Math.max(0, totalPayable - loanAmt);
 
-        document.getElementById('emi-result').innerText = '$' + Math.round(emi).toLocaleString();
-        document.getElementById('emi-loan-amt').innerText = '$' + Math.round(loanAmt).toLocaleString();
-        document.getElementById('emi-interest-amt').innerText = '$' + Math.round(totalInterest).toLocaleString();
+        document.getElementById('emi-result').innerText = '₹' + Math.round(emi).toLocaleString();
+        document.getElementById('emi-loan-amt').innerText = '₹' + Math.round(loanAmt).toLocaleString();
+        document.getElementById('emi-interest-amt').innerText = '₹' + Math.round(totalInterest).toLocaleString();
     }
 
     // 2. Property Comparison Logic
@@ -358,7 +358,7 @@
         const features = [
             { label: 'Category', key: 'cat' },
             { label: 'Location', key: 'loc' },
-            { label: 'Price', key: 'price', format: v => '$' + v },
+            { label: 'Price', key: 'price', format: v => '₹' + v },
             { label: 'Bedrooms', key: 'bed' },
             { label: 'Bathrooms', key: 'bath' },
             { label: 'Area', key: 'area' },

@@ -1,0 +1,98 @@
+{% load static %}
+{% include 'header.html' %}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="fa fa-home text-danger me-2"></i> Property Bookings & Advance Payments</h2>
+            <p class="text-muted small mb-0">Manage property purchase requests, advance token payments, and pending balances.</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Property & Location</th>
+                        <th>Client Details</th>
+                        <th>Financial Breakdown</th>
+                        <th>Booking Status</th>
+                        <th>Actions & Advance Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in bookings %}
+                    <tr>
+                        <td>
+                            <div class="fw-bold text-dark">{{ b.property_name }}</div>
+                            <small class="text-muted"><i class="fa fa-map-marker-alt text-danger me-1"></i> {{ b.property_location }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ b.user_name }}</div>
+                            <small class="text-muted d-block">{{ b.user_email }}</small>
+                            <small class="text-muted d-block">{{ b.user_phone }}</small>
+                        </td>
+                        <td>
+                            <div class="small">Property Price: <strong class="text-dark">₹{{ b.property_price }}</strong></div>
+                            <div class="small">Booking Advance: <strong class="text-danger">₹{{ b.advance_amount }}</strong> 
+                                {% if b.advance_payment_status == 'Successful' %}
+                                <span class="badge bg-success ms-1">Paid</span>
+                                {% else %}
+                                <span class="badge bg-secondary ms-1">Pending</span>
+                                {% endif %}
+                            </div>
+                            <div class="small">Remaining Balance: <strong class="text-primary">₹{{ b.remaining_amount }}</strong> <span class="badge bg-light text-dark border">Pending</span></div>
+                        </td>
+                        <td>
+                            {% if b.booking_status == 'Confirmed' %}
+                            <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa fa-check-circle me-1"></i> Confirmed</span>
+                            {% elif b.booking_status == 'Approved' or b.booking_status == 'Payment Pending' %}
+                            <span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="fa fa-credit-card me-1"></i> Approved - Pay Advance</span>
+                            {% elif b.booking_status == 'Requested' %}
+                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="fa fa-clock me-1"></i> Requested</span>
+                            {% else %}
+                            <span class="badge bg-danger rounded-pill px-3 py-2"><i class="fa fa-times-circle me-1"></i> {{ b.booking_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- Actions for User -->
+                            {% if role == 'user' %}
+                                {% if b.booking_status == 'Approved' or b.booking_status == 'Payment Pending' or b.booking_status == 'Requested' and b.advance_payment_status != 'Successful' %}
+                                <a href="/pay_advance/{{ b.id }}" class="btn btn-danger btn-sm rounded-pill px-3 fw-bold">
+                                    <i class="fa fa-credit-card me-1"></i> Pay Advance (₹{{ b.advance_amount }})
+                                </a>
+                                {% elif b.advance_payment_status == 'Successful' %}
+                                <span class="text-success small fw-bold"><i class="fa fa-check-circle me-1"></i> Advance Paid (TxID: {{ b.transaction_id }})</span>
+                                {% endif %}
+                            {% endif %}
+
+                            <!-- Actions for Builder/Admin -->
+                            {% if role == 'builder' or role == 'admin' %}
+                                {% if b.booking_status == 'Requested' %}
+                                <div class="d-flex gap-1">
+                                    <a href="/manage_booking_request/{{ b.id }}/approve" class="btn btn-success btn-sm px-3 py-1"><i class="fa fa-check me-1"></i> Approve</a>
+                                    <a href="/manage_booking_request/{{ b.id }}/reject" class="btn btn-danger btn-sm px-2 py-1" onclick="return confirm('Reject booking request?');"><i class="fa fa-times"></i></a>
+                                </div>
+                                {% elif b.advance_payment_status == 'Successful' %}
+                                <span class="text-success small fw-bold"><i class="fa fa-check-circle me-1"></i> Advance Received</span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fa fa-folder-open display-4 d-block mb-3 text-secondary"></i>
+                            <h5>No booking records found.</h5>
+                            <p class="small">After completing a site visit, you can submit a booking request for any property.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
